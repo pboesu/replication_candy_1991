@@ -5,83 +5,56 @@
 #  - For a successful replication, it should be prefixed with "[Re]"
 #  - For a failed replication, it should be prefixed with "[¬Re]"
 #  - For other article types, no instruction (but please, not too long)
-title: "ReScience (R)evolution"
+title: "[Re] Modeling Insect Phenology Using Ordinal Regression and Continuation Ratio Models"
 
 # List of authors with name, orcid number, email and affiliation
 # Affiliation "*" means contact author (required even for single-authored papers)
 authors:
   - name: Konrad Hinsen
-    orcid: 0000-0003-0330-9428
-    email: konrad.hinsen@cnrs.fr
+    orcid: 0000-0001-6723-6833
+    email: pboesu@gmail.com
     affiliations: 1,2
-    
-  - name: Nicolas P. Rougier
-    orcid: 0000-0002-6972-589X
-    email: Nicolas.Rougier@inria.fr
-    affiliations: 3,4,5,*      # * is for contact author
+
 
 # List of affiliations with code (corresponding to author affiliations), name
 # and address. You can also use these affiliations to add text such as "Equal
 # contributions" as name (with no address).
 affiliations:
   - code:    1
-    name:    Centre de Biophysique Moléculaire, CNRS UPR4301
-    address: Orléans, France
+    name:    British Trust for Ornithology
+    address: Thetford, United Kingdom
     
   - code:    2
-    name:    Synchrotron SOLEIL, Division Expériences
-    address: Gif sur Yvette, France
-    
-  - code:    3
-    name:    INRIA Bordeaux Sud-Ouest
-    address: Bordeaux, France
-    
-  - code:    4
-    name:    LaBRI, Université de Bordeaux, Institut Polytechnique de Bordeaux,
-             Centre National de la Recherche Scientifique, UMR 5800
-    address: Talence, France
-    
-  - code:    5
-    name:    Institut des Maladies Neurodégénératives, Université  de Bordeaux,
-             Centre National de la Recherche Scientifique, UMR 5293
-    address: Bordeaux, France
+    name:    University of Florida
+    address: Gainesville, FL, USA
 
 
 # List of keywords (adding the programming language might be a good idea)
-keywords: rescience c, rescience x
+keywords: Insects, categorical regression, R, sequential model 
 
 # Code URL and DOI/SWH (url is mandatory for replication, doi after acceptance)
 # You can get a DOI for your code from Zenodo, or an SWH identifier from
 # Software Heritage.
 #   see https://guides.github.com/activities/citable-code/
 code:
-  - url: https://github.com/rescience-c/template
+  - url: https://github.com/pboesu/replication_candy_1991
   - doi: 
   - swh: 
 
 # Data URL and DOI (optional if no data)
 data:
-  - url:
+  - url: https://github.com/pboesu/replication_candy_1991
   - doi:
 
 # Information about the original article that has been replicated
 replication:
- - cite: # Full textual citation
+ - cite: Steven G. Candy, Modeling Insect Phenology Using Ordinal Regression and Continuation Ratio Models, Environmental Entomology, Volume 20, Issue 1, 1 February 1991, Pages 190–195
  - bib:  # Bibtex key (if any) in your bibliography file
- - url:  # URL to the PDF, try to link to a non-paywall version
- - doi:  # Regular digital object identifier
+ - url:  https://doi.org/10.1093/ee/20.1.190
+ - doi:  10.1093/ee/20.1.190
 
 # Don't forget to surround abstract with double quotes
-abstract: "Three years have passed since ReScience published its first article
-           and since September 2015, things have been going steadily. We're
-           still alive, independent and without a budget. In the meantime, we
-           have published around 20 articles (mostly in computational
-           neuroscience & computational ecology) and the initial has grown
-           from around 10 to roughly 100 members (editors and reviewers), we
-           have advertised ReScience at several conferences worldwide, gave
-           some interviews and we published an article introducing ReScience in
-           PeerJ. Based on our experience at managing the journal during these
-           three years, we think the time is ripe for proposing some changes."
+abstract: "abstract text goes here"
 
 # Bibliography file (yours)
 bibliography: bibliography.bib
@@ -91,14 +64,14 @@ bibliography: bibliography.bib
 #  * Editorial
 #  * Letter
 #  * Replication
-type: Editorial
+type: Replication
 
 # Scientific domain of the article (e.g. Computational Neuroscience)
 #  (one domain only & try to be not overly specific)
-domain: 
+domain: Ecology
 
 # Coding language (main one only if several)
-language:
+language: R
 
   
 # To be filled by the author(s) after acceptance
