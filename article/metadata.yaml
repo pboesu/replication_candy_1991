@@ -10,10 +10,10 @@ title: "[Re] Modeling Insect Phenology Using Ordinal Regression and Continuation
 # List of authors with name, orcid number, email and affiliation
 # Affiliation "*" means contact author (required even for single-authored papers)
 authors:
-  - name: Konrad Hinsen
+  - name: Philipp H. Boersch-Supan
     orcid: 0000-0001-6723-6833
     email: pboesu@gmail.com
-    affiliations: 1,2
+    affiliations: 1,2,*
 
 
 # List of affiliations with code (corresponding to author affiliations), name
