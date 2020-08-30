@@ -9,7 +9,7 @@ budworm_counts <- as.data.frame(rbind(budworm_raw[,1:4],budworm_raw[,5:8],budwor
 names(budworm_counts) <- c('ddeg','total','stage','count')
 budworm_counts %>% arrange(ddeg, stage)
 
-budworm_table <- tidyr::pivot_wider(data = budworm_counts, names_from = stage, values_from = count, names_sort = TRUE, names_prefix = 'stage')
+budworm_table <- tidyr::pivot_wider(data = budworm_counts, names_from = stage, values_from = count, names_sort = TRUE, names_prefix = 'stage') %>% mutate(ddeg_cent = scale(ddeg, scale = FALSE))
 
 
 budworm_individuals <- budworm_counts %>% tidyr::uncount(count) %>% mutate(ddeg_cent = scale(ddeg, scale = FALSE))
@@ -30,8 +30,8 @@ library(VGAM)
 
 t(coef(budworm_sratio_logit_vglm, matrix = TRUE))
 
-(budworm_sratio_cloglog_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
-                                   cratio(link = "clogloglink", parallel = FALSE), data = budworm_table, trace=TRUE))#sratio model with clogloglink fails because of some numerical issue - but check the expected binomial sample sizes. Candy writes "Note that the n_ij for which the binomial sample size is N^*_ij is zero must be expluded from the fit by by giving them a prior weight of zero. VGAM requires positive weights but suggests using weights "such as 1e-8" to effectively exclude observations"
+(budworm_sratio_cloglog_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg_cent,
+                                   sratio(link = "clogloglink", parallel = FALSE), data = budworm_table, trace=TRUE, control = vglm.control(checkwz = TRUE, wzepsilon = 0.5)))#sratio model with clogloglink fails because of some numerical issue - but check the expected binomial sample sizes. Candy writes "Note that the n_ij for which the binomial sample size is N^*_ij is zero must be expluded from the fit by by giving them a prior weight of zero. VGAM requires positive weights but suggests using weights "such as 1e-8" to effectively exclude observations"
 
 #Nstar_ij = N_i - n_i1 - ... - n_i(j-1)
 
