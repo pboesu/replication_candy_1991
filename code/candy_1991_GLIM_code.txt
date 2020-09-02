@@ -1,0 +1,115 @@
+[o] GLIM 3.77 update 1 (copyright)1985 Royal Statistical [o] Society, London
+[o]
+[i] ? $units 84 $
+[i] ! read data consisting of
+[i] ! DDEG day-degrees, TOT total individuals in stage, 
+[i] ! LSF stage number 1-5 instars, 6 pupa, 7 adult
+[i] ! NUM total individuals in stage
+[i] $data DDEG TOT LSF NUM $
+[i] $read
+//data missing
+[i] ! note that there appears to be an error in Dennis et 
+[i] ! al. (1986) where the total number of individuals, NUM 
+[i] ! here, does not correspond to the sum across the 7 
+[i] ! stages for DDEG=388,442. The numbers in each stage 
+[i] ! have been assumed correct and the total adjusted
+[i] ! here.
+[i] $fac LSF 7 $
+[i] $yvar NUM $
+[i] ! set up macros to fit composite link functions
+[i] ! using Poisson deviance
+[i] ! see Candy, S.G. 1985. Using factors in composite link 
+[i] ! function models. GLIM Newsletter, 11: 24-8.
+[i] $MAC M2 $calc %DR=1 $endmac $
+[i] $MAC M3 $calc %VA=%FV $endmac $
+[i] $MAC M4 $calc %DI=2*(%YV*%log(%YV/%FV)-(%YV-%FV)) $ 
+[i] $endmac $
+[i] $MAC MEXT $extract %PE $endmac $
+[i] $MAC M1 $
+[i] $calc %L=%ne(%PL,O) $swi %L MEXT $
+[i] $calc LP1=%PE(7)*X $
+[i] $calc LP1=LP1+%PE(1)*(1+CUL)/X+%PE(2)*%eq(LSF,2)/X $ 
+[i] $calc LP1=LP1+%PE(3)*%eq(LSF,3)/X+%PE(4)*%eq(LSF,4)/X $ 
+[i] $calc LP1=LP1+%PE(5)*%eq(LSF,5)/X+%PE(6)*%eq(LSF,6)/X $ 
+[i] $calc LP1=LP1*%le(LP1,20)+21*%gt(LP1,20) $
+[i] $calc LP2=%PE(7)*X $
+[i] $calc LP2=LP2+%PE(1)*(1+CLT)/X+%PE(2)*%eq(LSF,3)/X $ 
+[i] $calc LP2=LP2+%PE(3)*%eq(LSF,4)/X+%PE(4)*%eq(LSF,5)/X $ 
+[i] $calc LP2=LP2+%PE(5)*%eq(LSF,6)/X+%PE(6)*%eq(LSF,7)/X $ 
+[i] $calc LP2=LP2*%le(LP2,20)+20*%gt(LP2,20) $
+[i] $calc F1=%exp(LP1)/(1+%exp(LP1)) $
+[i] $calc F2=%exp(LP2)/(1+%exp(LP2)) $
+[i] $calc FD1=%exp(LP1)/(1+%exp(LP1))**2 $
+[i] $calc FD2=%exp(LP2)/(1+%exp(LP2))**2 $
+[i] $calc WC2=TOT*(FD1*%eq(LSF,2)-FD2*%eq(LSF,3))/X $
+[i] $calc WC3=TOT*(FD1*%eq(LSF,3)-FD2*%eq(LSF,4))/X $
+[i] $calc WC4=TOT*(FD1*%eq(LSF,4)-FD2*%eq(LSF,5))/X $
+[i] $calc WC5=TOT*(FD1*%eq(LSF,5)-FD2*%eq(LSF,6))/X $
+[i] $calc WC6=TOT*(FD1*%eq(LSF,6)-FD2*%eq(LSF,7))/X $
+[i] $calc WGM=TOT*(FD1*(1+CUL)-FD2*(1+CLT))/X $
+[i] $calc WB=TOT*(FD1-FD2)*X $
+[i] $calc %LP=%PE(1)*WGM+%PE(2)*WC2+%PE(3)*WC3 $
+[i] $calc %LP=%LP+%PE(4)*WC4+%PE(5)*WC5 $
+[i] $calc %LP=%LP+%PE(6)*WC6+%PE(7)*WB $
+[i] $calc %FV=TOT*(F1-F2) $
+[i] $calc %FV=%FV*%gt(%FV,0)+0.0001*%le(%FV,O) $
+[i] $endmac $
+[i] !
+[i] !
+[i] $own M1 M2 M3 M4 $
+[i] ! initial estimates of cut-point parameters ori
+[i] ! and regression parameter P
+[i] $assign %PE=45,80,125,190,250,300,-0.6 $
+[i] $calc X=%sqrt(DDEG) $
+[i] specify abitrarily small (CLT) and large (CUL)
+[i] ! starting and finishing points for X
+[i] $calc CLT=-%eq(LSF,1) : CUL=10*%eq(LSF,7) $
+[i] $use M1 $use M4 $
+[i] ! deviance using initial estimates
+[i] $calc %S=%cu(%DI) $print %S $
+[o] 355.3
+$cycle 8 1 $
+[i] ! fit the model
+[i] $fit -%GM+WGM+WC2+WC3+WC4+WC5+WC6+WB $disp me $
+[o] deviance = 79.995 at cycle 1
+[o] deviance = 38.343 at cycle 2
+[o] deviance = 34.883 at cycle 3
+[o] deviance = 34.841 at cycle 4
+[o] deviance = 34.841 at cycle 5
+[o] d.f. = 77
+[o]
+[o] Current model:
+[o]
+[o] number of units is 84 
+[o]
+[o] y-variate NUM
+[o] weight *
+[o] offset *
+[o]
+[o] probability distribution is defined via the macros 
+[o] M1, M2, M3 and M4
+[o] scale parameter is to be estimated by the mean deviance 
+[o] 
+[o] terms = WGM + WC2 + WC3 + WC4 + WC5 + WC6 + WB
+[o]
+[o]     estimate  s.e.  parameter
+[o] 1 101.0 4.025 WGM
+[o] 2 71.22 4.770 WC2
+[o] 3 121.6 5.285 WC3
+[o] 4 186.2 6.677 WC4
+[o] 5 289.9 9.555 WC5
+[o] 6 400.3 13.35 WC6
+[o] 7 -0.8416 0.02689 WB
+[o] scale parameter taken as 0.4525
+[o]
+[i] ! Note that GLIM's degrees of freedom for the deviance 
+[i] ! is incorrect since the constraint that the fitted 
+[i] ! values sum to.the sample size at each sampling
+[i] ! occasion, produced using CLT (=alpha_0) and CUL (=alpha_a), 
+[i] ! has not been taken into account. The correct degrees 
+[i] ! of freedom here is 84-7-12=65.
+[i] ! Also, if a multinomial error structure is assumed 
+[i] ! then the standard errors in the above table should be 
+[i] ! divided by sqrt(0.4525)
+[i] $return
+[i] ? $stop

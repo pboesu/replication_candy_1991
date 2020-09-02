@@ -109,10 +109,14 @@ predicted_proportion <- function(par, stage, ddeg){
   }
   return(pred)}
 
-#predictions
-newdata <- expand.grid(stage = 1:7, ddeg = 50:700)
+#predictions and comparisons
+dennis_par = c(A1 = 121.08, A2 = 204.36, A3 = 264.41, A4 = 342.473, A5 = 465.620, A6 = 599.57, BB = 1.559)
+sas_par = c(120.0,	204.7,	264.6,	341.3,	464.5,	595.7,	1.4119)
+newdata <- expand.grid(stage = 1:7, ddeg = 0:900)
 newdata$model_predictions <- predicted_proportion(a2$par, newdata$stage, newdata$ddeg)
+newdata$original_prediction <- predicted_proportion(dennis_par, newdata$stage, newdata$ddeg)
+newdata$sas_prediction <- predicted_proportion(sas_par, newdata$stage, newdata$ddeg)
 
-ggplot(newdata, aes(x = ddeg, y = model_predictions, col = factor(stage), group = stage)) + geom_line() + geom_point(data = budworm_counts, aes(y = count/total)) + theme_classic()
+ggplot(newdata, aes(x = ddeg, y = model_predictions, col = factor(stage), group = stage)) + geom_line() + geom_point(data = budworm_counts, aes(y = count/total)) + theme_classic() + geom_line(aes(y = original_prediction), lty=2) + geom_line(aes(y = sas_prediction), lty=3,col='black')
 
 ggplot(newdata, aes(x = ddeg, y = model_predictions, group = stage)) + geom_line() + geom_point(data = budworm_counts, aes(y = count/total)) + facet_wrap(~stage) + theme_classic()
