@@ -48,10 +48,15 @@ data:
 
 # Information about the original article that has been replicated
 replication:
- - cite: Steven G. Candy, Modeling Insect Phenology Using Ordinal Regression and Continuation Ratio Models, Environmental Entomology, Volume 20, Issue 1, 1 February 1991, Pages 190–195
- - bib:  # Bibtex key (if any) in your bibliography file
+ - cite: "Steven G. Candy, Modeling Insect Phenology Using Ordinal Regression and Continuation Ratio Models, Environmental Entomology, Volume 20, Issue 1, 1 February 1991, Pages 190–195"
+ - bib:  candy1991modeling
  - url:  https://doi.org/10.1093/ee/20.1.190
  - doi:  10.1093/ee/20.1.190
+replication:
+ - cite: "Brian Dennis, William P. Kemp, Roy C. Beckwith, Stochastic Model of Insect Phenology: Estimation and Testing, Environmental Entomology, Volume 15, Issue 3, 1 June 1986, Pages 540–546"
+ - bib:  dennis1986stochastic
+ - url:  https://doi.org/10.1093/ee/15.3.540
+ - doi:  10.1093/ee/15.3.540
 
 # Don't forget to surround abstract with double quotes
 abstract: "abstract text goes here"

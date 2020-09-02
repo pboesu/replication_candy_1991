@@ -13,4 +13,55 @@ For example, repeated but sparse survey visits may enable the recording of wheth
 Such observations can be used to categorize an organism's state into discrete classes.
 Further, as the progression of the annual cycle often results in a natural ordering of these classes, e.g. from least to most developed, the resulting data can be described using ordinal regression models \cite{mccullagh1980regression,agresti2010analysis}.
 
-I here replicate a number of ordinal regression models that were developed by \citet{dennis1986stochastic} and \citet{candy1991modeling} to describe the development of the western spruce budworm \emph{Choristoneura freemani} (Lepidoptera: Tortricidae), a defoliating moth that is widespread in western North America \citep{brookes1987western}.
+I here replicate a number of ordinal regression models that were developed by \citet{dennis1986stochastic} and \citet{candy1991modeling} to describe insect phenology. 
+
+\section{Data}
+The models replicated in this study are fitted to a data set on the phenology of the western spruce budworm \emph{Choristoneura freemani} (Lepidoptera: Tortricidae), a defoliating moth that is widespread in western North America \citep{brookes1987western}. This data set was originally published in \citep{dennis1986stochastic} and is a subset of a larger budworm survey data set analysed in \citep{kemp1986}. The data consist of 12 sampling occassions at which counts of individual budworms in each of seven development stages (five larval instars, pupae, and adults) were recorded. The only available covariate is a measure of seasonal progression, the accumulated degree days calculated using a threshold of 5.5°C. \citet{candy1991modeling} noted an inconsistency in these data, namely that the reported total number of individuals did not correspond to the sum across the seven development stages for two of the sampling occasions. I therefore use the data set as it was republished in \citet{candy1990biology}, where numbers in each stage have been assumed correct and the totals for each sampling occasion were adjusted accordingly.
+
+\section{Methods}
+The statistical models replicated here are different types of ordinal regression models \citep{agresti} all with the aim of predicting the proportion of an insect population in a particular development stage at any given given time. In particular, they represent three different parametrisations of the so-called cumulative model and one version of the so-called continuation ratio model \citep{}. A recent summary of the theory underlying these models is provided in \citep{buerkner?}.
+
+
+models presented are  \citet{dennis1986stochastic} and \citet{candy1991modeling} 
+
+The models generally assume that the development of an insect follows a stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
+
+\begin{alignat*}{3}
+  \mathrm{stage\,1}&:\qquad {}&   S(t) & \leq a_1 \\
+  \mathrm{stage\,2}&:\qquad  a_1&< S(t) & \leq a_2 \\
+  \vdots & &\vdots \\
+  \mathrm{stage\,r-1}&:\qquad  a_{r-2}&< S(t) & \leq a_{r-1} \\
+  \mathrm{stage\,r}&:\qquad  a_{r-1}&< S(t) 
+\end{alignat*}
+
+
+The $a_j$ values are typically unknown and must be estimated from the data.
+
+\subsection{The Dennis et al. model}
+The model \citet{dennis1986stochastic} proposed is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
+\begin{equation}
+Pr[S(t) \leq s] = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}
+\end{equation}
+where $b^2$ is a positive constant which also must be estimated from the data. This distribution has a mean of $t$ and a variance of $(\pi^2/3)b^2t$.
+At any fixed time $t$ the thresholds $a_j$ segment the porbaility distribution function in to $r$ parts and the area under the curve between $a_{i-1}$ and $a_i$ gives the probability that the insect will be in stage $i$ at time $t$.
+
+This modelling approach is applied to a dataset consisting of samples that record the number of insects $x_{ij}$ in stage $j$ at times $t_1, t_2, \dots, t_q$ and the $x_{ij}$ are assumed to be random samples from a multinomial distribution with corresponding multinomial probabilities $p_{ij}$
+
+\begin{align}
+p_{ij} & = Pr[a_{j-1} < S(t_i) \leq a_{j}]\\
+& = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{a_j-t_i}{\sqrt{b^2t_i}}\right)\right]\right\} - 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{a_{j-1}-t_i}{\sqrt{b^2t_i}}\right)\right]\right\}
+\end{align}
+
+To fulfill the constraint that $\sum_{j=1}^r p_{ij}= 1$ it is further assumed that $a_0 = -\infty$ and $a_r = +\infty$.
+The model has $r$ unknown parameters $a_1, \dots, a_{r-1}$ and $b^2$ which can be found by maximising the corresponding log-likelihood function which takes the form 
+\begin{equation}
+\mathcal{\ell} = \log C + \sum_{j=1}^r \sum_{i=1}^q x_{ij} \log p_{ij}
+\label{eq:dennis_loglik}
+\end{equation}
+where $C$ is a combinatorial constant that is independent of the parameter values.
+
+\citet{dennis1986stochastic} provided SAS code to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. This code only required minimal updates to run in a contemporary version of SAS (SAS 9.3) and is provided in the article repository. In the interest of openness and reproducibility I created an R version of the estimation procedure which directly optimizes the log-likelihood \ref{eq:dennis_loglik} using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
+
+\citet{dennis1986stochastic}
+
+\section{Results}
