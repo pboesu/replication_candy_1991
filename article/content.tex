@@ -27,17 +27,17 @@ models presented are  \citet{dennis1986stochastic} and \citet{candy1991modeling}
 The models generally assume that the development of an insect follows a stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
 
 \begin{alignat*}{3}
-  \mathrm{stage\,1}&:\qquad {}&   S(t) & \leq a_1 \\
-  \mathrm{stage\,2}&:\qquad  a_1&< S(t) & \leq a_2 \\
+  \mathrm{stage}\,1&:\qquad {}&   S(t) & \leq a_1 \\
+  \mathrm{stage}\,2&:\qquad  a_1&< S(t) & \leq a_2 \\
   \vdots & &\vdots \\
-  \mathrm{stage\,r-1}&:\qquad  a_{r-2}&< S(t) & \leq a_{r-1} \\
-  \mathrm{stage\,r}&:\qquad  a_{r-1}&< S(t) 
+  \mathrm{stage}\,r-1&:\qquad  a_{r-2}&< S(t) & \leq a_{r-1} \\
+  \mathrm{stage}\,r&:\qquad  a_{r-1}&< S(t) 
 \end{alignat*}
 
 
 The $a_j$ values are typically unknown and must be estimated from the data.
-
-\subsection{The Dennis et al. model}
+\subsection{Ordinal regression model with constant variance }
+\subsection{Ordinal regression model with proportional variance}
 The model \citet{dennis1986stochastic} proposed is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
 \begin{equation}
 Pr[S(t) \leq s] = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}
@@ -60,8 +60,24 @@ The model has $r$ unknown parameters $a_1, \dots, a_{r-1}$ and $b^2$ which can b
 \end{equation}
 where $C$ is a combinatorial constant that is independent of the parameter values.
 
-\citet{dennis1986stochastic} provided SAS code to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. This code only required minimal updates to run in a contemporary version of SAS (SAS 9.3) and is provided in the article repository. In the interest of openness and reproducibility I created an R version of the estimation procedure which directly optimizes the log-likelihood \ref{eq:dennis_loglik} using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
+\citet{dennis1986stochastic} provided SAS code to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. This code only required minimal updates to run in a contemporary version of SAS (SAS 9.4) and is provided in the article repository. However, since SAS is a proprietary software package, I created an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
 
 \citet{dennis1986stochastic}
 
+\subsection{Continuation ratio model}
+
 \section{Results}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{../figures/dennis_fig2.pdf}
+  \caption{Logistic PDF of the \citet{dennis1986stochastic} model plotted for seven fixed values of~$t$. Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
+  \label{fig:fig1}
+\end{figure}
+
+\section{Results}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{../figures/dennis_fig3.pdf}
+  \caption{Expected proportion of insects in stages 1-7 plotted as functions of time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
+  \label{fig:fig2}
+\end{figure}
