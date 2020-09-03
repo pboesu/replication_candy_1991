@@ -1,7 +1,6 @@
 #budworm example from Dennis et al. 1986 / Candy 1991
 library(dplyr)
 library(ggplot2)
-library(brms)
 #read raw data which has multiple columns side by side. columns are DDEG (degree days) TOT (total) LSF (life stage) NUM (count)
 budworm_raw <- as.matrix(read.table("data/budworm_candy_1991_raw.txt"))
 #reshape data
