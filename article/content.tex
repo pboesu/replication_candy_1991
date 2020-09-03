@@ -24,7 +24,7 @@ The statistical models replicated here are different types of ordinal regression
 
 models presented are  \citet{dennis1986stochastic} and \citet{candy1991modeling} 
 
-The models generally assume that the development of an insect follows a stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
+The models generally assume that the development of an insect follows an unobservable stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
 
 \begin{alignat*}{3}
   \mathrm{stage}\,1&:\qquad {}&   S(t) & \leq a_1 \\
@@ -34,11 +34,22 @@ The models generally assume that the development of an insect follows a stochast
   \mathrm{stage}\,r&:\qquad  a_{r-1}&< S(t) 
 \end{alignat*}
 
-
 The $a_j$ values are typically unknown and must be estimated from the data.
+
 \subsection{Ordinal regression model with constant variance }
+If the cumulative number of individuals observed in stages 1 to $j$ is given by $m_{ij}=\sum_{k=1}^jn_{ik}$ then the ordinal regression model \citep{mccullagh1980} is specified by %TODO: tidy up indices r vs j to be consistent in enumerating the stages
+\begin{alignat}{1}
+\mathbf{E}(m_{ij})&=N_iPr(S(t) < \alpha_j), \qquad j = 1,\dots ,r\\
+&=N_iG(\alpha_j + \beta z_i)
+\end{alignat}
+where $G$ is the cumulative probability density function of $S(t)$, $\alpha_j$ are ordered thresholds or cut-point parameters, $\beta$ is a vector of regression parameters and $z_i$ is a vector of predictor variables.
+If the probability of an individual being in stage $j$ or earlier at time $t_i$ is $$\mu_{ij} = \mathbf{E}(m_{ij})/N_i$$ one can define $G^{-1}$ as the link function of a generalised linear model with the linear predictor $$\eta_{ij}=\alpha+\beta z_i$$. This ordinal regression model is commonly known as the cumulative model, and is applied to the budworm data in \citep{candy1991modeling} using the logit and complementary log-log link functions. In  both cases the parametrisation results in a constant variance for $S(t)$. \citet{candy1991modeling} reexpresses the model in terms of stage-specific counts $n_{ij}$  
+\begin{equation}
+\mathbf{E}(n_{ij})=N_i\{G(\alpha_j + \beta z_i) - G(\alpha_{j-1} + \beta z_i)\}
+\end{equation}
+and fits it using a Poisson likelihood \citep{thompson1981composite}. The original paper provides a set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} which is no longer actively developed or distributed. However, the cumulative model is implemented in various R packages, including \verb+VGAM+ \citep{VGAM} and \verb+ordinal+ \cite{ordinal} and I here make use of these to fit the model to the budworm data.
 \subsection{Ordinal regression model with proportional variance}
-The model \citet{dennis1986stochastic} proposed is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
+\citet{dennis1986stochastic} proposed a different parametrisation of the ordinal model is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
 \begin{equation}
 Pr[S(t) \leq s] = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}
 \end{equation}
@@ -67,7 +78,7 @@ where $C$ is a combinatorial constant that is independent of the parameter value
 \subsection{Continuation ratio model}
 
 \section{Results}
-\begin{figure}
+\begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{../figures/dennis_fig2.pdf}
   \caption{Logistic PDF of the \citet{dennis1986stochastic} model plotted for seven fixed values of~$t$. Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
@@ -75,7 +86,7 @@ where $C$ is a combinatorial constant that is independent of the parameter value
 \end{figure}
 
 \section{Results}
-\begin{figure}
+\begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{../figures/dennis_fig3.pdf}
   \caption{Expected proportion of insects in stages 1-7 plotted as functions of time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
