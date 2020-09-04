@@ -1,28 +1,25 @@
 \section{Introduction}
 
 Phenology, the timing of seasonal biological phenomena, is a key aspect of plant and animal life.
-It defines the timing and duration of growth and reproduction and thereby determines the ability to capture seasonally variable resources.
-The study of plant and animal phenology has allowed for a better understanding of fundamental ecosystem processes such as biogeochemical cycles,
-trophic interactions, animal migrations, and the response of populations and communities to global climate change,
-as well as informing applications in agriculture, forestry, and public health such as varietal selection in plant and animal breeding, or integrated pest and disease management \citep{chuine2017process}.
+It defines the timing and duration of growth and reproduction and thereby determines the ability to capture seasonally variable resources \citep{chuine2017process}.
+%The study of plant and animal phenology has allowed for a better understanding of fundamental ecosystem processes such as biogeochemical cycles,
+%trophic interactions, animal migrations, and the response of populations and communities to global climate change,
+%as well as informing applications in agriculture, forestry, and public health such as varietal selection in plant and animal breeding, or integrated pest and disease management .
 
-Phenological analyses often focus on the timing of events, such as the dates of plant flowering \citep{aono2008phenological}.%, the dates of egg laying in birds \cite{shutt2019environmental}, or the dates of first or peak appearance of butterflies \citep{roy2000phenology}.
+Phenological analyses often focus on the timing of particular events, such as the dates of peak plant flowering \citep{aono2008phenological}.%, the dates of egg laying in birds \cite{shutt2019environmental}, or the dates of first or peak appearance of butterflies \citep{roy2000phenology}.
 However, for many biological phenomena exact dates of particular events are more difficult to observe than the state of the system itself.
-For example, repeated but sparse survey visits may enable the recording of whether a plant is in bud, flowering, or setting fruit, but not the exact dates when each of those stages was reached.
+For example, repeated but sparse survey visits may record whether a plant is in bud, flowering, or setting fruit, but not the exact dates when each of those stages was reached.
 %Similarly, surveys may record the development stage of insects or amphibians, or the breeding or moult status of birds.
-Such observations can be used to categorize an organism's state into discrete classes.
-Further, as the progression of the annual cycle often results in a natural ordering of these classes, e.g. from least to most developed, the resulting data can be described using ordinal regression models \cite{mccullagh1980regression,agresti2010analysis}.
+Such observations can be used to categorize an organism's state into discrete classes which usually follow natural ordering, e.g. from least to most developed. 
+The resulting data can be described using ordinal regression models \cite{mccullagh1980regression,agresti2010analysis}.
 
 I here replicate a number of ordinal regression models that were developed by \citet{dennis1986stochastic} and \citet{candy1991modeling} to describe insect phenology. 
 
 \section{Data}
-The models replicated in this study are fitted to a data set on the phenology of the western spruce budworm \emph{Choristoneura freemani} (Lepidoptera: Tortricidae), a defoliating moth that is widespread in western North America \citep{brookes1987western}. This data set was originally published in \citep{dennis1986stochastic} and is a subset of a larger budworm survey data set analysed in \citep{kemp1986}. The data consist of 12 sampling occassions at which counts of individual budworms in each of seven development stages (five larval instars, pupae, and adults) were recorded. The only available covariate is a measure of seasonal progression, the accumulated degree days calculated using a threshold of 5.5°C. \citet{candy1991modeling} noted an inconsistency in these data, namely that the reported total number of individuals did not correspond to the sum across the seven development stages for two of the sampling occasions. I therefore use the data set as it was republished in \citet{candy1990biology}, where numbers in each stage have been assumed correct and the totals for each sampling occasion were adjusted accordingly.
+The models replicated in this study are fitted to a data set on the phenology of the western spruce budworm \emph{Choristoneura freemani} (Lepidoptera: Tortricidae), a defoliating moth that is widespread in western North America \citep{brookes1987western}. This data set was originally published in \citep{dennis1986stochastic} and is a subset of a larger budworm survey data set analysed in \citep{kemp1986stochastic}. The data consist of 12 sampling occassions at which counts of individual budworms in each of seven development stages (five larval instars, pupae, and adults) were recorded. The only available covariate is a measure of seasonal progression, the accumulated degree days calculated using a threshold of 5.5°C. \citet{candy1991modeling} noted an inconsistency in these data, namely that the reported total number of individuals did not correspond to the sum across the seven development stages for two of the sampling occasions. I therefore use the data set as it was republished in \citep{candy1990biology}, where numbers in each stage have been assumed correct and the totals for each sampling occasion were adjusted accordingly.
 
 \section{Methods}
-The statistical models replicated here are different types of ordinal regression models \citep{agresti} all with the aim of predicting the proportion of an insect population in a particular development stage at any given given time. In particular, they represent three different parametrisations of the so-called cumulative model and one version of the so-called continuation ratio model \citep{}. A recent summary of the theory underlying these models is provided in \citep{buerkner?}.
-
-
-models presented are  \citet{dennis1986stochastic} and \citet{candy1991modeling} 
+The statistical models replicated here are different types of ordinal regression models \citep{agresti2010analysis} all with the aim of predicting the proportion of an insect population in a particular development stage at any given given time. In particular, they represent three different parametrisations of the so-called cumulative model and one version of the so-called sequential model. A recent summary of the theory underlying these models is provided in \citep{burkner2019ordinal}.
 
 The models generally assume that the development of an insect follows an unobservable stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
 
@@ -36,8 +33,8 @@ The models generally assume that the development of an insect follows an unobser
 
 The $a_j$ values are typically unknown and must be estimated from the data.
 
-\subsection{Ordinal regression model with constant variance }
-If the cumulative number of individuals observed in stages 1 to $j$ is given by $m_{ij}=\sum_{k=1}^jn_{ik}$ then the ordinal regression model \citep{mccullagh1980} is specified by %TODO: tidy up indices r vs j to be consistent in enumerating the stages
+\subsection{Cumulative model with constant variance }
+If the cumulative number of individuals observed in stages 1 to $j$ is given by $m_{ij}=\sum_{k=1}^jn_{ik}$ then the ordinal regression model \citep{mccullagh1980regression} is specified by %TODO: tidy up indices r vs j to be consistent in enumerating the stages
 \begin{alignat}{1}
 \mathbf{E}(m_{ij})&=N_iPr(S(t) < \alpha_j), \qquad j = 1,\dots ,r\\
 &=N_iG(\alpha_j + \beta z_i)
@@ -48,7 +45,7 @@ If the probability of an individual being in stage $j$ or earlier at time $t_i$ 
 \mathbf{E}(n_{ij})=N_i\{G(\alpha_j + \beta z_i) - G(\alpha_{j-1} + \beta z_i)\}
 \end{equation}
 and fits it using a Poisson likelihood \citep{thompson1981composite}. The original paper provides a set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} which is no longer actively developed or distributed. However, the cumulative model is implemented in various R packages, including \verb+VGAM+ \citep{VGAM} and \verb+ordinal+ \cite{ordinal} and I here make use of these to fit the model to the budworm data.
-\subsection{Ordinal regression model with proportional variance}
+\subsection{Cumulative model with proportional variance}
 \citet{dennis1986stochastic} proposed a different parametrisation of the ordinal model is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
 \begin{equation}
 Pr[S(t) \leq s] = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}
@@ -75,7 +72,27 @@ where $C$ is a combinatorial constant that is independent of the parameter value
 
 \citet{dennis1986stochastic}
 
-\subsection{Continuation ratio model}
+\subsection{Sequential model}
+A different class of ordinal regression models, the sequential model, can be derived by treating the observations as the result of a strictly ordinal counting process, in the sense that to achieve a stage $j$, all lower stages $1,\dots,j-1$ have to be achieved. The general form of this model is known as the sequential model, and rather than assuming a single latent process $S(t)$ as in the cumulative model there is a latent continuous variable $S_j$ for each category $j$. As in the cumulative model this can be framed as a GLM 
+\begin{equation}
+S_j = \eta + \epsilon_j
+\end{equation}
+with a linear predictor $\eta$ and an error term $\epsilon_j$ which has mean zero and is distributed following some distribution $G$. This leads to a model of the form 
+\begin{equation}
+Pr[S = j|S \geq j, \eta] = G(a_j - \eta)
+\end{equation}
+When $G$ is the logistic distribution this model is also known as the continuation ratio model \citep{fienberg1980analysis}. Confusingly, there are two common versions of the model in the literature both using this name. The one outlined above describing the probability of the sequential process *stopping* at stage $j$, and the other describing the probability of the process *continuing* beyond stage $j$, i.e. $Pr(Y > j | Y \geq j)$ \citep{VGAM, burkner2019ordinal}. THe paper replicated here \citep{candy1991modeling} only considered the former version of this model.
+In their notation this leads to an expected value for the stage-specific counts $n_{ij}$
+\begin{alignat}{3}
+\mathbf{E}(n_{ij})&=N_i G(\beta_{01} + \beta_{11}t_i), &j&=1\\
+&=N^*_{ij} G(\beta_{0j} + \beta_{1j}t_i), \qquad &j&=2,\dots,r-1\\
+\end{alignat}
+with 
+$$N^*_{ij}=\left(N_i - \sum_{k=1}^{j-1}n_{ik}\right) $$
+and unconditional probabilities 
+
+\citet{candy1991modeling} uses a maximum likelihood estimation to fit these models assuming the $n_{ij}$ are binomially distributed conditional on $N_i$ for stage 1 and conditional on $N*_{ij}$ for stages $2,\dots,r-1$. No code is provided for this estimation procedure in the original paper. However, the sequential model with stopping parameterisation is implemented in \verb+VGAM+ \citep{VGAM} and I here make use of it to fit the model to the budworm data.
+
 
 \section{Results}
 \begin{figure}[p]
