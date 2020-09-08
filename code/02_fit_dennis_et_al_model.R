@@ -1,7 +1,7 @@
 budworm_counts <- readr::read_csv('data/budworm_counts.csv')
 
 #optimize likelihood directly rather than doing the IRLS approach
-neg_log_lik <- function(par, count, total, stage, ddeg){
+nll_cm_dennis <- function(par, count, total, stage, ddeg){
   A1 <- par[1]
   A2 <- par[2]
   A3 <- par[3]
@@ -23,8 +23,8 @@ neg_log_lik <- function(par, count, total, stage, ddeg){
   nll <- -1*sum(count*log(pred))
   return(nll)
 }
-a2 <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), neg_log_lik, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1), method = 'BFGS')
-
+logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+logit_cm_dennis_nll <- add_se_vcov_nll_hessian(logit_cm_dennis_nll)
 
 predicted_proportion <- function(par, stage, ddeg){
   A1 <- par[1]
@@ -48,8 +48,19 @@ predicted_proportion <- function(par, stage, ddeg){
 
 
 #predictions and comparisons
-dennis_par = c(A1 = 121.08, A2 = 204.36, A3 = 264.41, A4 = 342.473, A5 = 465.620, A6 = 599.57, BB = 1.559)
-sas_par = c(120.0, 204.7, 264.6, 341.3, 464.5, 595.7, 1.4119)
+dennis_par = c(A1 = 121.08, A2 = 204.36, A3 = 264.41, A4 = 342.473, A5 = 465.620, A6 = 599.57, BB = 1.559)#published in kemp
+sas_par = c(120.0, 204.7, 264.6, 341.3, 464.5, 595.7, 1.4119)#extracted from SAS fit
+candy_par <-c(logit_dennis_cm_candy_nll$par[1:6]/(-1*logit_dennis_cm_candy_nll$par[7]), (-1/logit_dennis_cm_candy_nll$par[7])^2)
+
+#paste together fits and
+dennis_model_estimates <- as.data.frame(rbind(dennis_par,sas_par, logit_cm_dennis_nll$par, candy_par))
+#dennis_model_estimates$model <- "cumulative"
+#dennis_model_estimates$link <- "logit"
+dennis_model_estimates$fit <- c("\\citep{kemp1986stochastic}", "SAS replication Eq.~\\ref{eq:dennis_cm}", "R replication Eq.~\\ref{eq:dennis_cm}","R replication Eq.~\\ref{eq:candy_cm_count_form}")
+
+cat(knitr::kable(dennis_model_estimates, digits = 3, format = 'latex',row.names = FALSE,
+                 col.names = c(paste('$a_',1:6,'$', sep=''),'$b^2$','fit'), escape = FALSE),
+    file = 'outputs/dennis_model_table.tex')#TODO: change to kable extra to suppress hlines 
 
 #figure 2
 logistic_pdf <- function(s, t, bb){
