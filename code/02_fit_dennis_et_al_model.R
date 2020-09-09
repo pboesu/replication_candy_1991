@@ -83,9 +83,9 @@ logistic_pdf <- function(s, t, bb){
   exp((s-t)/(sqrt(bb*t)))/(sqrt(bb*t)*(1+exp((s-t)/(sqrt(bb*t))))^2)
 }
 s <- 0:800
-#redraw fig 2 using paramter estimates from Kemp
+#redraw fig 2 using parameter estimates from Kemp
 pdf('figures/dennis_fig2.pdf', width = 10, height = 7)
-plot(s, logistic_pdf(s, 50, 1.559), type='l', ylab = "Probaility density", ylim = c(0,0.031), xaxs = 'i', yaxs='i')
+plot(s, logistic_pdf(s, 50, 1.559), type='l', ylab = "Probability density", ylim = c(0,0.031), xaxs = 'i', yaxs='i')
 for (t in c(150,250,350,450,550,650)){
   lines(s, logistic_pdf(s, t, 1.559))
 }

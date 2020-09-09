@@ -45,9 +45,10 @@ If the probability of an individual being in stage $j$ or earlier at time $t_i$ 
 \mathbf{E}(n_{ij})=N_i\{G(\alpha_j + \beta z_i) - G(\alpha_{j-1} + \beta z_i)\}
 \label{eq:candy_cm_count_form}
 \end{equation}
-and fits it using a Poisson likelihood \citep{thompson1981composite}. No code is provided for this estimation procedure in the original paper, however, \citep{candy1990biology} provides a set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} which is no longer actively developed or distributed. I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for (\ref{eq:candy_cm_count_form}) using the \verb+optim+ function. The cumulative model is also implemented in various R packages, including \verb+VGAM+ \citep{VGAM} and \verb+ordinal+ \cite{ordinal} and I here make use of these to fit the model to the budworm data.
+and fits it using a Poisson likelihood \citep{thompson1981composite}. No code is provided for this estimation procedure in the original paper, however, \citep{candy1990biology} provides a set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} which is no longer actively developed or distributed. I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for (\ref{eq:candy_cm_count_form}) using the \verb+optim+ function. The cumulative model is also implemented in various R packages, including in the \verb+vglm+ function in \verb+VGAM+ \citep{VGAM} and the \verb+clm+ function in \verb+ordinal+ \cite{ordinal} and I here make use of these to fit the model to the budworm data.
+
 \subsection{Cumulative model with proportional variance}
-\citet{dennis1986stochastic} proposed a different parametrisation of the ordinal model is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
+\citet{dennis1986stochastic} proposed a different parameterisation of the ordinal model is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
 \begin{equation}
 Pr[S(t) \leq s] = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}
 \end{equation}
@@ -69,7 +70,7 @@ The model has $r$ unknown parameters $a_1, \dots, a_{r-1}$ and $b^2$ which can b
 \end{equation}
 where $C$ is a combinatorial constant that is independent of the parameter values.
 
-\citet{dennis1986stochastic} provided SAS code to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. This code only required minimal updates to run in a contemporary version of SAS (SAS 9.4) and is provided in the article repository. However, since SAS is a proprietary software package, I created an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
+\citet{dennis1986stochastic} provided SAS code to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. This was updated to run in a contemporary version of SAS (SAS 9.4) and is provided in the article code repository. However, since SAS is a proprietary software package, I created an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
 
 \citet{candy1991modeling} re-expresses (\ref{eq:dennis_cm}) to match the form of (\ref{eq:candy_cm_count_form}), which results in the following re\-para\-meter\-isation $\alpha_j = a_j/b$, $\beta = -1/b$, and $z_i = \sqrt{t_i}$, and uses the poisson likelihood approach described above for parameter estimation. 
 
@@ -92,16 +93,22 @@ with
 $$N^*_{ij}=\left(N_i - \sum_{k=1}^{j-1}n_{ik}\right) $$
 and conditional probabilities 
 
-\citet{candy1991modeling} uses a maximum likelihood estimation to fit these models assuming the $n_{ij}$ are binomially distributed conditional on $N_i$ for stage 1 and conditional on $N^*_{ij}$ for stages $2,\dots,r-1$. No code is provided for this estimation procedure in the original paper. However, the sequential model with stopping parameterisation is implemented in \verb+VGAM+ \citep{VGAM} and I here make use of it to fit the model to the budworm data.
+\citet{candy1991modeling} uses a maximum likelihood estimation to fit these models assuming the $n_{ij}$ are binomially distributed conditional on $N_i$ for stage 1 and conditional on $N^*_{ij}$ for stages $2,\dots,r-1$. No code is provided for this estimation procedure in the original paper. However, the sequential model with stopping parameterisation is implemented in \verb+VGAM::vglm+ \citep{VGAM} and I here make use of it to fit the model to the budworm data.
 
 
 \section{Results}
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=\textwidth]{../figures/dennis_fig2.pdf}
-  \caption{Logistic PDF of the \citet{dennis1986stochastic} model plotted for seven fixed values of~$t$. Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
-  \label{fig:fig1}
-\end{figure}
+\subsection{Cumulative model with constant variance}
+
+\begin{table}
+  \small
+    \centering
+    \caption{Parameter estimates for the cumulative model with constant variance. This table replicates results presented in the first two rows of Table~2 of \citep{candy1991modeling}. Note that \texttt{ordinal::clm} uses a parameterisation $\alpha_j - \beta z_i$ for the linear predictor yielding a parameter estimate for $\beta$ with the opposite sign than the other methods.}
+  \input{../outputs/cm_const_var_table}
+  \label{tab:tab1}
+\end{table}
+
+\subsection{Cumulative model with proportional variance}
+
 
 \begin{table}
   \small
@@ -111,13 +118,17 @@ and conditional probabilities
   \label{tab:tab2}
 \end{table}
 
-\begin{table}
-  \small
-    \centering
-    \caption{Parameter estimates for the cumulative model with constant variance. This table replicates results presented in the first two rows of Table~2 of \citep{candy1991modeling}.}
-  \input{../outputs/cm_const_var_table}
-  \label{tab:tab2}
-\end{table}
+The original SAS code provided in \citep{dennis1986stochastic} required minimal updates to run in a contemporary version of SAS (SAS 9.4). 
+Translating the model code to R was straightforward once I took the decision to not reimplement the IRNLS approach, but instead implemented a direct minimsation of the negative log likelihood with \verb+optim+.  
+Parameter estimates from SAS NLIN and R optim (Table.~\ref{tab:tab2}) were virtually identical, but differed slightly from the parameter estimates presented in \citep{kemp1986stochastic}, which was assumed to be the original source for the parameter estimates, as no actual parameter estimates were presented in \citep{dennis1986stochastic}. 
+Based on these three sets of parameter estimates it was also possible to redraw two figures from \citep{dennis1986stochastic}. Figure~\ref{fig:fig2} and~\ref{fig:fig2}, respectively,  show that despite minor parameter differences there is an overall good agreement between the original results and the replication.
+ 
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{../figures/dennis_fig2.pdf}
+  \caption{Logistic PDF of the \citet{dennis1986stochastic} model plotted for seven fixed values of~$t$. Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
+  \label{fig:fig1}
+\end{figure}
 
 \section{Results}
 \begin{figure}[p]
@@ -126,3 +137,14 @@ and conditional probabilities
   \caption{Expected proportion of insects in stages 1-7 plotted as functions of time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
   \label{fig:fig2}
 \end{figure}
+
+\subsection{Sequential model}
+
+\begin{table}
+  \small
+    \centering
+    \caption{Parameter estimates for the sequential model with stopping ratios. This table replicates results presented in Table~3 of \citep{candy1991modeling}.}
+  \input{../outputs/sm_table}
+  \label{tab:tab3}
+\end{table}
+

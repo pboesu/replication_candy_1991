@@ -7,7 +7,10 @@ library(dplyr)
 budworm_counts <- readr::read_csv('data/budworm_counts.csv')
 budworm_counts$occ <- as.numeric(as.factor(budworm_counts$ddeg)) #encode sampling occasion
 budworm_counts$alpha_index = budworm_counts$stage + 1 #encode an index variable to facilitate fitting the linear predictor
-budworm_counts <- group_by(budworm_counts, ddeg) %>% mutate(cumulative = cumsum(count)) #calculate cumulative counts across stages for cumulative likelihood
+budworm_counts <- group_by(budworm_counts, ddeg) %>%
+  arrange(ddeg,stage) %>% 
+  mutate(cumulative = cumsum(count)) %>% #calculate cumulative counts across stages for cumulative likelihood
+  mutate(n_star = total - lag(cumulative)) 
 
 
 poisson_nll_cm_candy <- function(par, data, linkinv = gtools::inv.logit){
@@ -26,7 +29,7 @@ poisson_nll_cm_candy <- function(par, data, linkinv = gtools::inv.logit){
 }
 
 poisson_nll_cm_candy_dennis <- function(par, data){
-  alpha <- c(-1, par[1:6], 5000)
+  alpha <- c(-10, par[1:6], 5000)
   beta = par[7]
   pred_n <- rep(NA, nrow(data))
   for (i in 1:nrow(data)){
@@ -39,6 +42,36 @@ poisson_nll_cm_candy_dennis <- function(par, data){
   nll = -1*sum(dpois(data$count, pred_n, log=T))
   return(nll)
 }
+
+binomial_nll_sm_candy <- function(par, data, linkinv = gtools::inv.logit){
+  beta0 <- par[1:6]
+  beta1 <- par[7:12]
+  p_star <- rep(NA, nrow(data))
+  pred_n <- rep(NA, nrow(data))
+  for (i in 1:nrow(data)){
+    p_star[i] <- with(data, (linkinv(beta0[stage[i]] + beta1[stage[i]]*(ddeg[i]))))
+    pred_n[i] <- with(data,
+                      ifelse(stage[i] == 1,
+                             total[i] * p_star[i],
+                             n_star[i]* p_star[i])
+    )
+  }
+  #pred_n <- pmax(pred_n, 1e-10)
+  #pd <- ifelse(data$count != 0, 2*(data$count*log(data$count/pred_n) - (data$count - pred_n)), 0)
+  nll = ifelse(data$stage[data$stage!=7] ==1, 
+               dbinom(data$count[data$stage!=7], data$total[data$stage!=7], p_star[data$stage!=7], log = TRUE),
+               dbinom(data$count[data$stage!=7], data$n_star[data$stage!=7], p_star[data$stage!=7], log = TRUE))
+  nll = -1*sum(nll)
+  return(nll)
+}
+binomial_nll_sm_candy(par = c(10.41, 12.96, 12.02, 11.16, 17.70, 33.73, -0.085, -0.062, -0.046, -0.033, -0.038, -0.056), data = budworm_counts)
+binomial_nll_sm_candy(par = c(rep(1,6), rep(-0.01,6)), data = budworm_counts)
+
+logit_sm_candy_nll <- optim(par = c(rep(1,6), rep(-0.01,6)), binomial_nll_sm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+logit_sm_candy_nll$par
+
+cloglog_sm_candy_nll <- optim(par = c(rep(2,6), rep(-0.02,6)), binomial_nll_sm_candy, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+cloglog_sm_candy_nll$par
 
 logit_cm_candy_nll <- optim(par = c(10,20,30,40,50,60,-0.6), poisson_nll_cm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
 #minimizing neg log likelihood leads to different parameter estimates than minimizing deviance
