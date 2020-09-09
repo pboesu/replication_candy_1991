@@ -82,7 +82,7 @@ with a linear predictor $\eta$ and an error term $\epsilon_j$ which has mean zer
 \begin{equation}
 Pr[S = j|S \geq j, \eta] = G(a_j - \eta)
 \end{equation}
-When $G$ is the logistic distribution this model is also known as the continuation ratio model \citep{fienberg1980analysis}. Confusingly, there are two common versions of the model in the literature both using this name. The one outlined above describing the probability of the sequential process \emph{stopping} at stage $j$, and the other describing the probability of the process \emph{continuing} beyond stage $j$, i.e. $Pr(Y > j | Y \geq j)$ \citep{burkner2019ordinal,VGAM}. The paper replicated here \citep{candy1991modeling} only considered the former version of this model.
+When $G$ is the logistic distribution this model is also known as the continuation ratio model \citep{fienberg1980analysis}. Confusingly, there are two common versions of the model in the literature both using this name. The one outlined above describing the probability of the sequential process \emph{stopping} at stage $j$, and the other describing the probability of the process \emph{continuing} beyond stage $j$, i.e. $Pr(Y > j | Y \geq j)$ \citep{burkner2019ordinal,VGAM}. The paper replicated here \citep{candy1991modeling}  used the stopping parametrisation of this model.
 In their notation this leads to an expected value for the stage-specific counts $n_{ij}$
 \begin{alignat}{3}
 \mathbf{E}(n_{ij})&=N_i G(\beta_{01} + \beta_{11}t_i), &j&=1\\
@@ -90,7 +90,7 @@ In their notation this leads to an expected value for the stage-specific counts 
 \end{alignat}
 with 
 $$N^*_{ij}=\left(N_i - \sum_{k=1}^{j-1}n_{ik}\right) $$
-and unconditional probabilities 
+and conditional probabilities 
 
 \citet{candy1991modeling} uses a maximum likelihood estimation to fit these models assuming the $n_{ij}$ are binomially distributed conditional on $N_i$ for stage 1 and conditional on $N^*_{ij}$ for stages $2,\dots,r-1$. No code is provided for this estimation procedure in the original paper. However, the sequential model with stopping parameterisation is implemented in \verb+VGAM+ \citep{VGAM} and I here make use of it to fit the model to the budworm data.
 
@@ -105,8 +105,17 @@ and unconditional probabilities
 
 \begin{table}
   \small
-    \caption{Parameter estimates for the cumulative logit model from \citep{dennis1986stochastic}. This table replicates results presented in the first row of Table~1 of  \citep{kemp1986stochastic}.}
+    \centering
+    \caption{Parameter estimates for the cumulative logit model with proportional variance. This table replicates results presented in the first row of Table~1 of  \citep{kemp1986stochastic} and the last row of Table~2 of \citep{candy1991modeling}.}
   \input{../outputs/dennis_model_table}
+  \label{tab:tab2}
+\end{table}
+
+\begin{table}
+  \small
+    \centering
+    \caption{Parameter estimates for the cumulative model with constant variance. This table replicates results presented in the first two rows of Table~2 of \citep{candy1991modeling}.}
+  \input{../outputs/cm_const_var_table}
   \label{tab:tab2}
 \end{table}
 

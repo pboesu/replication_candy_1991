@@ -1,6 +1,6 @@
 #budworm example from Dennis et al. 1986 / Candy 1991
 library(dplyr)
-library(ggplot2)
+#library(ggplot2)
 #read raw data which has multiple columns side by side. columns are DDEG (degree days) TOT (total) LSF (life stage) NUM (count)
 budworm_raw <- as.matrix(read.table("data/budworm_candy_1991_raw.txt"))
 #reshape data
@@ -10,7 +10,9 @@ budworm_counts %>% arrange(ddeg, stage) -> budworm_counts
 readr::write_csv(budworm_counts, 'data/budworm_counts.csv')
 
 budworm_table <- tidyr::pivot_wider(data = budworm_counts, names_from = stage, values_from = count, names_sort = TRUE, names_prefix = 'stage') %>% mutate(ddeg_cent = scale(ddeg, scale = FALSE))
+readr::write_csv(budworm_table, 'data/budworm_table.csv')
 
 
 budworm_individuals <- budworm_counts %>% tidyr::uncount(count) %>% mutate(ddeg_cent = scale(ddeg, scale = FALSE))
-ggplot(budworm_counts, aes(x = ddeg, y = stage, size = count)) + geom_point()
+readr::write_csv(budworm_individuals, 'data/budworm_individuals.csv')
+#ggplot(budworm_counts, aes(x = ddeg, y = stage, size = count)) + geom_point()
