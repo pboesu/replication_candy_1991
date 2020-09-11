@@ -10,7 +10,8 @@ budworm_counts$alpha_index = budworm_counts$stage + 1 #encode an index variable 
 budworm_counts <- group_by(budworm_counts, ddeg) %>%
   arrange(ddeg,stage) %>% 
   mutate(cumulative = cumsum(count)) %>% #calculate cumulative counts across stages for cumulative likelihood
-  mutate(n_star = total - lag(cumulative)) 
+  mutate(n_star = ifelse(stage ==1, total, total - lag(cumulative)),
+         stage_factor = as.factor(stage)) 
 
 
 poisson_nll_cm_candy <- function(par, data, linkinv = gtools::inv.logit){
@@ -43,35 +44,36 @@ poisson_nll_cm_candy_dennis <- function(par, data){
   return(nll)
 }
 
-binomial_nll_sm_candy <- function(par, data, linkinv = gtools::inv.logit){
-  beta0 <- par[1:6]
-  beta1 <- par[7:12]
-  p_star <- rep(NA, nrow(data))
-  pred_n <- rep(NA, nrow(data))
-  for (i in 1:nrow(data)){
-    p_star[i] <- with(data, (linkinv(beta0[stage[i]] + beta1[stage[i]]*(ddeg[i]))))
-    pred_n[i] <- with(data,
-                      ifelse(stage[i] == 1,
-                             total[i] * p_star[i],
-                             n_star[i]* p_star[i])
-    )
-  }
-  #pred_n <- pmax(pred_n, 1e-10)
-  #pd <- ifelse(data$count != 0, 2*(data$count*log(data$count/pred_n) - (data$count - pred_n)), 0)
-  nll = ifelse(data$stage[data$stage!=7] ==1, 
-               dbinom(data$count[data$stage!=7], data$total[data$stage!=7], p_star[data$stage!=7], log = TRUE),
-               dbinom(data$count[data$stage!=7], data$n_star[data$stage!=7], p_star[data$stage!=7], log = TRUE))
-  nll = -1*sum(nll)
-  return(nll)
-}
-binomial_nll_sm_candy(par = c(10.41, 12.96, 12.02, 11.16, 17.70, 33.73, -0.085, -0.062, -0.046, -0.033, -0.038, -0.056), data = budworm_counts)
-binomial_nll_sm_candy(par = c(rep(1,6), rep(-0.01,6)), data = budworm_counts)
+# binomial_nll_sm_candy <- function(par, data, linkinv = gtools::inv.logit){
+#   beta0 <- par[1:6]
+#   beta1 <- par[7:12]
+#   p_star <- rep(NA, nrow(data))
+#   pred_n <- rep(NA, nrow(data))
+#   for (i in 1:nrow(data)){
+#     p_star[i] <- with(data, (linkinv(beta0[stage[i]] + beta1[stage[i]]*(ddeg[i]))))
+#     pred_n[i] <- with(data,
+#                       ifelse(stage[i] == 1,
+#                              total[i] * p_star[i],
+#                              n_star[i]* p_star[i])
+#     )
+#   }
+#   #pred_n <- pmax(pred_n, 1e-10)
+#   #pd <- ifelse(data$count != 0, 2*(data$count*log(data$count/pred_n) - (data$count - pred_n)), 0)
+#   nll = ifelse(data$stage[data$stage!=7] ==1, 
+#                dbinom(data$count[data$stage!=7], data$total[data$stage!=7], p_star[data$stage!=7], log = TRUE),
+#                dbinom(data$count[data$stage!=7], data$n_star[data$stage!=7], p_star[data$stage!=7], log = TRUE))
+#   nll = -1*sum(nll)
+#   return(nll)
+# }
+# binomial_nll_sm_candy(par = c(10.41, 12.96, 12.02, 11.16, 17.70, 33.73, -0.085, -0.062, -0.046, -0.033, -0.038, -0.056), data = budworm_counts)
+# binomial_nll_sm_candy(par = c(rep(1,6), rep(0,6)), data = budworm_counts)
 
-logit_sm_candy_nll <- optim(par = c(rep(1,6), rep(-0.01,6)), binomial_nll_sm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
-logit_sm_candy_nll$par
+#logit_sm_candy_nll <- optim(par = c(1:6, rep(-0.02,6)), binomial_nll_sm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1, parscale = c(rep(100,6),rep(1,6))), method = 'BFGS')
+#logit_sm_candy_nll$par
+#logit_sm_candy_nll_rec <- optim(par = logit_sm_candy_nll$par, binomial_nll_sm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1, parscale = c(rep(100,6),rep(1,6))), method = 'BFGS')
 
-cloglog_sm_candy_nll <- optim(par = c(rep(2,6), rep(-0.02,6)), binomial_nll_sm_candy, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
-cloglog_sm_candy_nll$par
+#cloglog_sm_candy_nll <- optim(par = c(rep(2,6), rep(-0.02,6)), binomial_nll_sm_candy, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+#cloglog_sm_candy_nll$par
 
 logit_cm_candy_nll <- optim(par = c(10,20,30,40,50,60,-0.6), poisson_nll_cm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
 #minimizing neg log likelihood leads to different parameter estimates than minimizing deviance
@@ -95,9 +97,17 @@ candy_nll_estimates$link <- c("logit","cloglog","logit")
 candy_nll_estimates$fit <- c("R \\verb+optim+")
 candy_nll_estimates$eqn <- c("\\ref{eq:candy_cm_count_form}","\\ref{eq:candy_cm_count_form}","\\ref{eq:candy_cm_count_form}")
 saveRDS(candy_nll_estimates, "outputs/candy_nll_estimates.RDS")
+
+#save parameter estimates
+candy_sm_nll_estimates <- as.data.frame(rbind(logit_sm_candy_nll$par[1:6],logit_sm_candy_nll$par[7:12], cloglog_sm_candy_nll$par[1:6], cloglog_sm_candy_nll$par[7:12]))
+candy_sm_nll_estimates$model <- "sequential"
+candy_sm_nll_estimates$link <- c("logit","logit","cloglog","cloglog")
+candy_sm_nll_estimates$fit <- c("R \\verb+optim+")
+candy_sm_nll_estimates$par <- c("$\\beta_{0j}$","$\\beta_{1j}$","$\\beta_{0j}$","$\\beta_{1j}$")
+saveRDS(candy_sm_nll_estimates, "outputs/candy_sm_nll_estimates.RDS")
 #create predictions to compare with candy original fit
-pred_data <- expand.grid(ddeg = 0:800, stage = 1:7, total = 100)
-pred_data$alpha_index = pred_data$stage + 1
+#pred_data <- expand.grid(ddeg = 0:800, stage = 1:7, total = 100)
+#pred_data$alpha_index = pred_data$stage + 1
 
 # ##eqn 2
 # alpha <- c(-10, logit_dennis_cm_candy_nll$par[1:6], 5000)
@@ -146,3 +156,14 @@ pred_data$alpha_index = pred_data$stage + 1
 # plot(budworm_counts$ddeg, expected_m_ij)
 # plot(budworm_counts$cumulative, expected_m_ij)
 
+# #sweep through different starting values
+# beta_0 = 1:10
+# beta_1 = seq(-0.05,0.05, by = 0.01)
+# 
+# par_grid <- expand.grid(beta_0 = beta_0, beta_1 = beta_1)
+# 
+# get_nll <- function(beta_0, beta_1){
+#   fit <- try(optim(par = c(rep(beta_0,6),rep(beta_1,6)), binomial_nll_sm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1, parscale = c(rep(100,6),rep(1,6))), method = 'BFGS'))
+#   return(ifelse(inherits(fit, 'try-error'), NA, fit$value))
+# }
+# logit_sm_grid <- purrr::map2(par_grid$beta_0, par_grid$beta_1, get_nll)
