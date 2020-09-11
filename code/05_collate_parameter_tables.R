@@ -38,15 +38,18 @@ candy_sm_cloglog_beta1 <- c(-0.065, -0.044, -0.037, -0.026, -0.023, -0.029)
 
 #load estimates
 candy_vglm_sm_estimates <- readRDS("outputs/candy_vglm_sm_estimates.RDS")
+candy_sm_nll_estimates <- readRDS("outputs/candy_sm_nll_estimates.RDS")
+
 
 sm_table <- as.data.frame(rbind(candy_sm_logit_beta0, candy_sm_logit_beta1, candy_sm_cloglog_beta0, candy_sm_cloglog_beta1)) %>% 
   mutate(par = c("$\\beta_{0j}$","$\\beta_{1j}$","$\\beta_{0j}$","$\\beta_{1j}$"),
          link = c('logit', 'logit', 'cloglog', 'cloglog'),
          fit = "Original \\citep{candy1991modeling}") %>%
   bind_rows(candy_vglm_sm_estimates) %>%
+  bind_rows(candy_sm_nll_estimates) %>%
   select(par, V1:V6, link, fit) %>%
   arrange(desc(link),par,fit) %>%
-  knitr::kable(format = 'latex', escape = FALSE, booktabs = TRUE, digits = 3, linesep = c('', '', '', '\\addlinespace'),
+  knitr::kable(format = 'latex', escape = FALSE, booktabs = TRUE, digits = 3, linesep = c('', '', '\\addlinespace'),
                col.names = c('Parameter', paste('$\\beta_{\\_',1:6,'}$', sep=''),'Link','Method'))
 
 cat(sm_table, file = 'outputs/sm_table.tex')
