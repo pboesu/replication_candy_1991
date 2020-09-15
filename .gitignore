@@ -8,5 +8,8 @@
 *.bcf
 *.run.xml
 *.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
 
 .Rproj.user
