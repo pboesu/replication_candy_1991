@@ -2,14 +2,9 @@
 
 Phenology, the timing of seasonal biological phenomena, is a key aspect of plant and animal life.
 It defines the timing and duration of growth and reproduction and thereby determines the ability to capture seasonally variable resources \citep{chuine2017process}.
-%The study of plant and animal phenology has allowed for a better understanding of fundamental ecosystem processes such as biogeochemical cycles,
-%trophic interactions, animal migrations, and the response of populations and communities to global climate change,
-%as well as informing applications in agriculture, forestry, and public health such as varietal selection in plant and animal breeding, or integrated pest and disease management .
-
-Phenological analyses often focus on the timing of particular events, such as the dates of peak plant flowering \citep{aono2008phenological}.%, the dates of egg laying in birds \cite{shutt2019environmental}, or the dates of first or peak appearance of butterflies \citep{roy2000phenology}.
+Phenological analyses often focus on the timing of particular events, such as the dates of peak plant flowering \citep{aono2008phenological}.
 However, for many biological phenomena exact dates of particular events are more difficult to observe than the state of the system itself.
 For example, repeated but sparse survey visits may record whether a plant is in bud, flowering, or setting fruit, but not the exact dates when each of those stages was reached.
-%Similarly, surveys may record the development stage of insects or amphibians, or the breeding or moult status of birds.
 Such observations can be used to categorize an organism's state into discrete classes which usually follow natural ordering, e.g. from least to most developed. 
 The resulting data can be described using ordinal regression models \cite{mccullagh1980regression,agresti2010analysis}.
 
@@ -17,12 +12,20 @@ I here replicate a number of ordinal regression models that were developed by \c
 
 \section{Data}
 \label{sec:data}
-The models replicated in this study are fitted to a data set on the phenology of the western spruce budworm \emph{Choristoneura freemani} (Lepidoptera: Tortricidae), a defoliating moth that is widespread in western North America \citep{brookes1987western}. This data set was originally published in \citep{dennis1986stochastic} and is a subset of a larger budworm survey data set analysed in \citep{kemp1986stochastic}. The data consist of 12 sampling occassions at which counts of individual budworms in each of seven development stages (five larval instars, pupae, and adults) were recorded. The only available covariate is a measure of seasonal progression, the accumulated degree days calculated using a threshold of 5.5°C. \citet{candy1991modeling} noted an inconsistency in these data, namely that the reported total number of individuals did not correspond to the sum across the seven development stages for two of the sampling occasions. I therefore use the data set as it was republished in \citep{candy1990biology}, where numbers in each stage have been assumed correct and the totals for each sampling occasion were adjusted accordingly.
+The models replicated in this study are fitted to a data set on the phenology of the western spruce budworm \emph{Choristoneura freemani} (Lepidoptera: Tortricidae), a defoliating moth that is widespread in western North America \citep{brookes1987western}.
+This data set was originally published in \citep{dennis1986stochastic} and is a subset of a larger budworm survey data set analysed in \citep{kemp1986stochastic}. 
+The data consist of 12 sampling occassions at which counts of individual budworms in each of seven development stages (five larval instars, pupae, and adults) were recorded. 
+The only available covariate is a measure of seasonal progression, the accumulated degree days calculated using a threshold of 5.5°C. 
+\citet{candy1991modeling} noted an inconsistency in these data, namely that the reported total number of individuals did not correspond to the sum across the seven development stages for two of the sampling occasions. 
+I therefore use the data set as it was republished in \citep{candy1990biology}, where numbers in each stage have been assumed correct and the totals for each sampling occasion were adjusted accordingly.
 
 \section{Methods}
-The statistical models replicated here are different types of ordinal regression models \citep{agresti2010analysis} all with the aim of predicting the proportion of an insect population in a particular development stage at any given given time. In particular, they represent three different parametrisations of the so-called cumulative model and one version of the so-called sequential model. A recent summary of the theory underlying these models is provided in \citep{burkner2019ordinal}.
+The statistical models replicated here are different types of ordinal regression models \citep{agresti2010analysis} all with the aim of predicting the proportion of an insect population in a particular development stage at any given given time. 
+In particular, they represent three different parametrisations of the so-called cumulative model and one version of the so-called sequential model. 
+A recent summary of the theory underlying these models is provided in \citep{burkner2019ordinal}.
 
-The models generally assume that the development of an insect follows an unobservable stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
+The models generally assume that the development of an insect follows an unobservable stochastic process $S(t)$ consisting of accumulated increments of development over time $t$. 
+As the amount of $S(t)$ increases, the insect passes through successive stages, delimited by moults, with the $j$th moult occuring when the development threshold $a_j$ is reached:
 
 \begin{alignat*}{3}
   \mathrm{stage}\,1&:\qquad {}&   S(t) & \leq a_1 \\
@@ -41,19 +44,25 @@ If the cumulative number of individuals observed in stages 1 to $j$ is given by 
 &=N_iG(\alpha_j + \beta z_i)
 \end{alignat}
 where $G$ is the cumulative probability density function of $S(t)$, $\alpha_j$ are ordered thresholds or cut-point parameters, $\beta$ is a vector of regression parameters and $z_i$ is a vector of predictor variables.
-If the probability of an individual being in stage $j$ or earlier at time $t_i$ is $$\mu_{ij} = \mathbf{E}(m_{ij})/N_i$$ one can define $G^{-1}$ as the link function of a generalised linear model with the linear predictor $$\eta_{ij}=\alpha+\beta z_i$$. This ordinal regression model is commonly known as the cumulative model, and is applied to the budworm data in \citep{candy1991modeling} using the logit and complementary log-log link functions. In  both cases the parametrisation results in a constant variance for $S(t)$. \citet{candy1991modeling} reexpresses the model in terms of stage-specific counts $n_{ij}$  
+If the probability of an individual being in stage $j$ or earlier at time $t_i$ is $$\mu_{ij} = \mathbf{E}(m_{ij})/N_i$$ one can define $G^{-1}$ as the link function of a generalised linear model with the linear predictor $$\eta_{ij}=\alpha+\beta z_i$$. This ordinal regression model is commonly known as the cumulative model, and is applied to the budworm data in \citep{candy1991modeling} using the logit and complementary log-log link functions. 
+In both cases the parameterisation results in a constant variance for $S(t)$.
+ \citet{candy1991modeling} reexpresses the model in terms of stage-specific counts $n_{ij}$  
 \begin{equation}
 \mathbf{E}(n_{ij})=N_i\{G(\alpha_j + \beta z_i) - G(\alpha_{j-1} + \beta z_i)\}
 \label{eq:candy_cm_count_form}
 \end{equation}
-and fits it using a Poisson likelihood \citep{thompson1981composite}. No code or inital values for the likelihood optimisation are provided for this estimation procedure in the original paper.   I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for (\ref{eq:candy_cm_count_form}) using the \verb+optim+ function. The cumulative model is also implemented in various R packages, including in the \verb+vglm+ function in \verb+VGAM+ \citep{VGAM} and the \verb+clm+ function in \verb+ordinal+ \cite{ordinal} and I here make use of these to fit the model to the budworm data.
+and fits it using a Poisson likelihood \citep{thompson1981composite}. 
+No code or inital values for the likelihood optimisation are provided for this estimation procedure in the original paper.   
+I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for (\ref{eq:candy_cm_count_form}) using the \verb+optim+ function.
+ The cumulative model is also implemented in various R packages, including in the \verb+vglm+ function in \verb+VGAM+ \citep{VGAM} and the \verb+clm+ function in \verb+ordinal+ \cite{ordinal} and I here make use of these to fit the model to the budworm data.
 
 \subsection{Cumulative model with proportional variance}
 \citet{dennis1986stochastic} proposed a different parameterisation of the ordinal model is based on assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
 \begin{equation}
 Pr[S(t) \leq s] = 1 \bigg/ \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}
 \end{equation}
-where $b^2$ is a positive constant which also must be estimated from the data. This distribution has a mean of $t$ and a variance of $(\pi^2/3)b^2t$.
+where $b^2$ is a positive constant which also must be estimated from the data. 
+This distribution has a mean of $t$ and a variance of $(\pi^2/3)b^2t$.
 At any fixed time $t$ the thresholds $a_j$ segment the porbaility distribution function in to $r$ parts and the area under the curve between $a_{i-1}$ and $a_i$ gives the probability that the insect will be in stage $i$ at time $t$.
 
 This modelling approach is applied to a dataset consisting of samples that record the number of insects $x_{ij}$ in stage $j$ at times $t_1, t_2, \dots, t_q$ and the $x_{ij}$ are assumed to be random samples from a multinomial distribution with corresponding multinomial probabilities $p_{ij}$
@@ -71,20 +80,30 @@ The model has $r$ unknown parameters $a_1, \dots, a_{r-1}$ and $b^2$ which can b
 \end{equation}
 where $C$ is a combinatorial constant that is independent of the parameter values.
 
-\citet{dennis1986stochastic} provided SAS code and initial values to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. This was updated to run in a contemporary version of SAS (SAS 9.4) and is provided in the article code repository. However, since SAS is a proprietary software package, I created an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
+\citet{dennis1986stochastic} provided SAS code and initial values to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. 
+This was updated to run in a contemporary version of SAS (SAS 9.4) and is provided in the article code repository. 
+However, since SAS is a proprietary software package, I created an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
 
-\citet{candy1991modeling} re-expresses (\ref{eq:dennis_cm}) to match the form of (\ref{eq:candy_cm_count_form}), which results in the following re\-para\-meter\-isation $\alpha_j = a_j/b$, $\beta = -1/b$, and $z_i = \sqrt{t_i}$, and uses the poisson likelihood approach described above for parameter estimation. No code is given for the estimation of the version of the model in \citep{candy1991modeling}, however an earlier manuscript by the same author \citep{candy1990biology} provides a set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} which is no longer actively developed or distributed. Initial values from the GLIM code were used in the estimation with R.
+\citet{candy1991modeling} re-expresses (\ref{eq:dennis_cm}) to match the form of (\ref{eq:candy_cm_count_form}), which results in the following re\-para\-meter\-isation $\alpha_j = a_j/b$, $\beta = -1/b$, and $z_i = \sqrt{t_i}$, and uses the poisson likelihood approach described above for parameter estimation. 
+No code is given for the estimation of the version of the model in \citep{candy1991modeling}, however an earlier manuscript by the same author \citep{candy1990biology} provides a set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} which is no longer actively developed or distributed. 
+Initial values from the GLIM code were used in the estimation with R.
 
 \subsection{Sequential model}
-A different class of ordinal regression models, the sequential model, can be derived by treating the observations as the result of a strictly ordinal counting process, in the sense that to achieve a stage $j$, all lower stages $1,\dots,j-1$ have to be achieved. The general form of this model is known as the sequential model, and rather than assuming a single latent process $S(t)$ as in the cumulative model there is a latent continuous variable $S_j$ for each category $j$. As in the cumulative model this can be framed as a GLM 
+A different class of ordinal regression models, the sequential model, can be derived by treating the observations as the result of a strictly ordinal counting process, in the sense that to achieve a stage $j$, all lower stages $1,\dots,j-1$ have to be achieved. 
+The general form of this model is known as the sequential model, and rather than assuming a single latent process $S(t)$ as in the cumulative model there is a latent continuous variable $S_j$ for each category $j$. 
+As in the cumulative model this can be framed as a GLM 
 \begin{equation}
 S_j = \eta + \epsilon_j
 \end{equation}
-with a linear predictor $\eta$ and an error term $\epsilon_j$ which has mean zero and is distributed following some distribution $G$. This leads to a model of the form 
+with a linear predictor $\eta$ and an error term $\epsilon_j$ which has mean zero and is distributed following some distribution $G$. 
+This leads to a model of the form 
 \begin{equation}
 Pr[S = j|S \geq j, \eta] = G(a_j - \eta)
 \end{equation}
-When $G$ is the logistic distribution this model is also known as the continuation ratio model \citep{fienberg1980analysis}. Confusingly, there are two common versions of the model in the literature both using this name. The one outlined above describing the probability of the sequential process \emph{stopping} at stage $j$, and the other describing the probability of the process \emph{continuing} beyond stage $j$, i.e. $Pr(Y > j | Y \geq j)$ \citep{burkner2019ordinal,VGAM}. The paper replicated here \citep{candy1991modeling}  used the stopping parametrisation of this model.
+When $G$ is the logistic distribution this model is also known as the continuation ratio model \citep{fienberg1980analysis}. 
+Confusingly, there are two common versions of the model in the literature both using this name. 
+The one outlined above describing the probability of the sequential process \emph{stopping} at stage $j$, and the other describing the probability of the process \emph{continuing} beyond stage $j$, i.e. $Pr(Y > j | Y \geq j)$ \citep{burkner2019ordinal,VGAM}. 
+The paper replicated here \citep{candy1991modeling}  used the stopping parametrisation of this model.
 In their notation this leads to an expected value for the stage-specific counts $n_{ij}$
 \begin{alignat}{3}
 \mathbf{E}(n_{ij})&=N_i G(\beta_{01} + \beta_{11}t_i), &j&=1 \label{eq:candy_sm_counts}\\
@@ -97,7 +116,9 @@ and conditional probabilities
 p^*_{ij} =  G(\beta_{0j} + \beta_{1j}t_i), \qquad j=1,\dots,r-1
 \end{equation}
 
-\citet{candy1991modeling} uses GLM estimation routines in \verb+GLIM+ to fit these models assuming the $n_{ij}$ are binomially distributed conditional on $N_i$ for stage 1 and conditional on $N^*_{ij}$ for stages $2,\dots,r-1$. No code is provided for this estimation procedure in the original paper, but the model is straightforward to fit using the \verb+glm+ function in R with a model formula of the form \verb!cbind(count,total - N_star) ~ stage + stage:time - 1!.  The sequential model with stopping parameterisation is also implemented in \verb+VGAM::vglm+ \citep{VGAM} and I here make use of it to fit the model to the budworm data.
+\citet{candy1991modeling} uses GLM estimation routines in \verb+GLIM+ to fit these models assuming the $n_{ij}$ are binomially distributed conditional on $N_i$ for stage 1 and conditional on $N^*_{ij}$ for stages $2,\dots,r-1$. 
+No code is provided for this estimation procedure in the original paper, but the model is straightforward to fit using the \verb+glm+ function in R with a model formula of the form \verb!cbind(count,total - N_star) ~ stage + stage:time - 1!.  
+The sequential model with stopping parameterisation is also implemented in \verb+VGAM::vglm+ \citep{VGAM} and I here make use of it to fit the model to the budworm data.
 
 
 \section{Results}
@@ -106,19 +127,26 @@ p^*_{ij} =  G(\beta_{0j} + \beta_{1j}t_i), \qquad j=1,\dots,r-1
 \begin{table}[b]
   \small
     \centering
-    \caption{Parameter estimates for the cumulative model with constant variance. This table replicates results presented in the first two rows of Table~2 of \citep{candy1991modeling}. Note that \texttt{ordinal::clm} uses a parameterisation $\alpha_j - \beta z_i$ for the linear predictor yielding a parameter estimate for $\beta$ with the opposite sign than the other methods. The cloglog link model failed to fit using \texttt{VGAM::vglm}.}
+    \caption{Parameter estimates for the cumulative model with constant variance. 
+    This table replicates results presented in the first two rows of Table~2 of \citep{candy1991modeling}. 
+    Note that \texttt{ordinal::clm} uses a parameterisation $\alpha_j - \beta z_i$ for the linear predictor yielding a parameter estimate for $\beta$ with the opposite sign than the other methods. 
+    The cloglog link model failed to fit using \texttt{VGAM::vglm}.}
   \input{../outputs/cm_const_var_table}
   \label{tab:tab1}
 \end{table}
 
-No code was provided in \citep{candy1991modeling} for the parameter estimation of the cumulative model. Parameters were estimated using a direct optimisation of the Poisson likelihood for (\ref{eq:candy_cm_count_form}), as well as with the R functions \verb+VGAM::vglm+ and \verb+ordinal::clm+. The cloglog link model failed due to numerical errors when using the \verb+vglm+ function. Parameter estimates were close to those of the original study for the two R packages, and differed slightly for the \verb+optim+ method (Table~\ref{tab:tab1}), the latter exhibiting a noticeable sensitivity to the choice of starting values.
+No code was provided in \citep{candy1991modeling} for the parameter estimation of the cumulative model. 
+Parameters were estimated using a direct optimisation of the Poisson likelihood for (\ref{eq:candy_cm_count_form}), as well as with the R functions \verb+VGAM::vglm+ and \verb+ordinal::clm+. 
+The cloglog link model failed due to numerical errors when using the \verb+vglm+ function. 
+Parameter estimates were close to those of the original study for the two R packages, and differed slightly for the \verb+optim+ method (Table~\ref{tab:tab1}), the latter exhibiting a noticeable sensitivity to the choice of starting values.
 
 \subsection{Cumulative model with proportional variance}
 
 \begin{table}
   \small
     \centering
-    \caption{Parameter estimates for the cumulative logit model with proportional variance. This table replicates results presented in the first row of Table~1 of  \citep{kemp1986stochastic} and the last row of Table~2 of \citep{candy1991modeling}.}
+    \caption{Parameter estimates for the cumulative logit model with proportional variance. 
+    This table replicates results presented in the first row of Table~1 of  \citep{kemp1986stochastic} and the last row of Table~2 of \citep{candy1991modeling}.}
   \input{../outputs/dennis_model_table}
   \label{tab:tab2}
 \end{table}
@@ -126,12 +154,16 @@ No code was provided in \citep{candy1991modeling} for the parameter estimation o
 The original SAS code provided in \citep{dennis1986stochastic} required minimal updates to run in a contemporary version of SAS (SAS 9.4). 
 Translating the model code to R was straightforward once I took the decision to not reimplement the IRNLS approach, but instead implemented a direct minimsation of the negative log likelihood with \verb+optim+.  
 Parameter estimates from SAS NLIN and R optim (Table.~\ref{tab:tab2}) were virtually identical, but differed slightly from the parameter estimates presented in \citep{kemp1986stochastic}, which was assumed to be the original source for the parameter estimates, as no actual parameter estimates were presented in \citep{dennis1986stochastic}. 
-Based on these three sets of parameter estimates it was also possible to redraw two figures from \citep{dennis1986stochastic}. Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor parameter differences there is an overall good agreement between the original results and the replication.
+Based on these three sets of parameter estimates it was also possible to redraw two figures from \citep{dennis1986stochastic}. 
+Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor parameter differences there is an overall good agreement between the original results and the replication.
  
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{../figures/dennis_fig2.pdf}
-  \caption{Logistic PDF of the \citet{dennis1986stochastic} model plotted for seven fixed values of~$t$. Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
+  \caption{Logistic PDF of the \citet{dennis1986stochastic} model plotted for seven fixed values of~$t$. 
+  Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. 
+  Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). 
+  This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
   \label{fig:fig1}
 \end{figure}
 
@@ -139,17 +171,24 @@ Based on these three sets of parameter estimates it was also possible to redraw 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{../figures/dennis_fig3.pdf}
-  \caption{Expected proportion of insects in stages 1-7 plotted as functions of time $t$. Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
+  \caption{Expected proportion of insects in stages 1-7 plotted as functions of time $t$.
+   Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). 
+   This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
   \label{fig:fig2}
 \end{figure}
 
 \subsection{Sequential model}
-No code was provided in \citep{candy1991modeling} for the parameter estimation of the sequential model. Parameters were estimated using the base R \verb+glm+ function, as well as with the  \verb+VGAM::vglm+ function. The cloglog link model failed due to numerical errors when using the \verb+vglm+ function. Parameter estimates were identical to the original study (Table~\ref{tab:tab3}).
+No code was provided in \citep{candy1991modeling} for the parameter estimation of the sequential model. 
+Parameters were estimated using the base R \verb+glm+ function, as well as with the  \verb+VGAM::vglm+ function. 
+The cloglog link model failed due to numerical errors when using the \verb+vglm+ function. 
+Parameter estimates were identical to the original study (Table~\ref{tab:tab3}).
 
 \begin{table}
   \small
     \centering
-    \caption{Parameter estimates for the sequential model with stopping ratios. This table replicates results presented in Table~3 of \citep{candy1991modeling}. The cloglog link model failed to fit using \texttt{VGAM::vglm}.}
+    \caption{Parameter estimates for the sequential model with stopping ratios. 
+    This table replicates results presented in Table~3 of \citep{candy1991modeling}. 
+    The cloglog link model failed to fit using \texttt{VGAM::vglm}.}
   \input{../outputs/sm_table}
   \label{tab:tab3}
 \end{table}
@@ -157,7 +196,10 @@ No code was provided in \citep{candy1991modeling} for the parameter estimation o
 \section{Discussion}
 Overall the results from both \citep{dennis1986stochastic} and \citep{candy1991modeling} could be replicated closely.
 
-The SAS code provided in \citep{dennis1986stochastic} required only minimal updates to run in a contemporary version of SAS (SAS 9.4) and produced virtually identical estimates as the R re-implementation. These estimates, however, differed slightly from the parameter values reported in \citep{kemp1986stochastic}. Given that the same initial values were used in all implementations, I believe that this disagreement is most likely caused by the inconsistencies in the published data set described in Section~\ref{sec:data}. The corrections applied to the data by \citep{candy1991modeling} result in a data set that is internally consistent but potentially different to that on which the estimates in \citep{kemp1986stochastic} are based.  
+The SAS code provided in \citep{dennis1986stochastic} required only minimal updates to run in a contemporary version of SAS (SAS 9.4) and produced virtually identical estimates as the R re-implementation. 
+These estimates, however, differed slightly from the parameter values reported in \citep{kemp1986stochastic}. 
+Given that the same initial values were used in all implementations, I believe that this disagreement is most likely caused by the inconsistencies in the published data set described in Section~\ref{sec:data}. 
+The corrections applied to the data by \citep{candy1991modeling} result in a data set that is internally consistent but potentially different to that on which the estimates in \citep{kemp1986stochastic} are based.  
 
 No code was provided in \citep{candy1991modeling}. 
 However, the mathematical and verbal descriptions of the models were detailed enough to re-implement the estimation procedure for all models in R. 
@@ -167,5 +209,7 @@ Initial values for the model with constant variance had to be guessed.
 The direct optimisation of the likelihood is sensitive to the choice of initial values, and this may explain the difference in the parameter estimates between the different methods. Another factor may be slight differences in the numerical implementation of the inverse link functions. 
 Naive implementations of both the inverse logit and inverse complementary log-log function suffer from numerical underflow and/or overflow. 
 The GLIM code from \citep{candy1990biology} uses multiple thresholding steps during the calculation of the linear predictor to mitigate against this, whereas the R implementation makes use of a single thresholding step in the inverse link function (\verb+gtools:inv.logit+ and \verb+VGAM::clogloglink+, respectively).  
+The numerical instability of the complementary log-log link may have contributed to the failure to fit either of the two complementary log-log models using the \verb+VGAM::vglm+ function. 
+However, despite several troubleshooting attempts the exact reason for the numerical issues leading to this failure could not be established.
 
-VGAM failure
+ 
