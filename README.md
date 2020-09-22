@@ -32,7 +32,7 @@ git clone https://github.com/pboesu/replication_candy_1991
 ```r
 renv::restore()
 ```
-Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
+Agree to installing the required packages when prompted. Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
 
 
 #### Running the model
