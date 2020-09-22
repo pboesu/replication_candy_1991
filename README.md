@@ -26,12 +26,14 @@ The project makes use of the the `renv` package for project-local R dependency m
 ```
 git clone https://github.com/pboesu/replication_candy_1991
 ```
-2. Launch `R` in the repository. The local `.Rprofile` file should ensure that the correct version of `renv` is installed.
+2. Launch `R` in the repository. The local `.Rprofile` file should ensure that the correct version of `renv` is installed. Ignore any message about using `renv::status()`. 
 
 3. Run the following command to install the exact versions of packages specified in the renv.lock file.
 ```r
 renv::restore()
 ```
+Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
+
 
 #### Running the model
 After setup, the analysis can be run to reproduce all figures and tables by sourcing the `R` scripts in sequence
@@ -48,7 +50,7 @@ source('code/06_collate_parameter_tables.R')
 The resulting figures are written to the `figures/` subdirectory, the resulting tables are written to the `outputs/` subdirectory. The manuscript can be recompiled from these.
 
 
-Data formatting and model fitting are not computationally intensive. On an ordinary laptop, running the analysis scripts takes less than 1 minute, and uses less than 200MB of memory on a single core. Installing the packages before first time use may take an additional few minutes depending on the end-user's internet connection and whether or not packages are installed from source.
+Data formatting and model fitting are not computationally intensive. On an ordinary laptop, running the analysis scripts takes less than 1 minute, and uses less than 200MB of memory on a single core. 
 
 
 #### Notes on warnings and errors
