@@ -59,7 +59,7 @@ replication:
  - doi:  10.1093/ee/15.3.540
 
 # Don't forget to surround abstract with double quotes
-abstract: "abstract text goes here"
+abstract: "This article reimplements a number of ordinal regression models in R and succesfully replicates their application to insect phenology data."
 
 # Bibliography file (yours)
 bibliography: bibliography.bib
@@ -99,7 +99,7 @@ contributors:
 
 # This information will be provided by the editor
 dates:
-  - received:  November 1, 2018
+  - received:  September 22, 2020
   - accepted:
   - published: 
 
