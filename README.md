@@ -4,7 +4,7 @@
 
 This project reimplements a number of ordinal regression models from Dennis et al. (1986) and Candy (1991) in `R` and attempts to replicate their application to insect phenology data. The full references to the original articles are:
 
-> B. Dennis, W.P. Kemp,and R.C. Beckwith (1986): "Stochastic Model of Insect Phenology: Estimation and Testing." Environmental Entomology 15(3):540–546. https://doi.org/10.1093/ee/15.3.540
+> B. Dennis, W.P. Kemp,and R.C. Beckwith (1986): "Stochastic Model of Insect Phenology: Estimation and Testing." Environmental Entomology 15(3):540–546. https://doi.org/10.1093/ee/15.3.540    
 > S.G. Candy (1991): "Modeling Insect Phenology Using Ordinal Regression and Continuation Ratio Models." Environmental Entomology 20(1):190–195. https://doi.org/10.1093/ee/20.1.190
 
 The reproduction was successful and has been submitted to [ReScience C](https://rescience.github.io/) 
@@ -12,7 +12,7 @@ The reproduction was successful and has been submitted to [ReScience C](https://
 ### Model reproduction
 
 All `R` scripts required to reformat the original data and reproduce the statistical models are in the `code/` subdirectory.
-They assume that the project folder is used as the working directory.
+They assume that the project folder is used as the working directory.    
 Additional `SAS` and `GLIM` code from the original publications is provided in the `code/` directory for completeness.
 
 
@@ -26,29 +26,26 @@ The project makes use of the the `renv` package for project-local R dependency m
 ```
 git clone https://github.com/pboesu/replication_candy_1991
 ```
-2. Launch *R* in the repository.
+2. Launch `R` in the repository. The local `.Rprofile` file should ensure that the correct version of `renv` is installed.
 
-3. Run the following commands to install the exact versions of packages (as specified in the Project Environment)
-```julia
-import Pkg; Pkg.activate(".")
-Pkg.instantiate()
+3. Run the following command to install the exact versions of packages specified in the renv.lock file.
+```r
+renv::restore()
 ```
 
 #### Running the model
 After setup, the analysis can be run to reproduce all figures and tables by sourcing the `R` scripts in sequence
 
 ```r
-profvis::profvis({
 source('code/01_reformat_budworm_data.R')
 source('code/02_fit_candy_1991_models.R')
 source('code/03_fit_dennis_et_al_model.R')
 source('code/04_fit_VGAM_models.R')
 source('code/05_fit_ordinal_models.R')
 source('code/06_collate_parameter_tables.R')
-})
 ```
 
-The resulting figures are written to the `figures/` subdirectory, the resulting tables are written to the `outputs/` subdirectory.
+The resulting figures are written to the `figures/` subdirectory, the resulting tables are written to the `outputs/` subdirectory. The manuscript can be recompiled from these.
 
 
 Data formatting and model fitting are not computationally intensive. On an ordinary laptop, running the analysis scripts takes less than 1 minute, and uses less than 200MB of memory on a single core. Installing the packages before first time use may take an additional few minutes depending on the end-user's internet connection and whether or not packages are installed from source.
