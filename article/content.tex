@@ -189,7 +189,7 @@ Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor
   \label{fig:fig2}
 \end{figure} 
 
-\begin{table}[hbp]
+\begin{table}[htb]
   \small
     \centering
     \caption{Parameter estimates for the sequential model with stopping ratios (Equation~\ref{eq:candy_sm_counts}). 
@@ -202,7 +202,7 @@ Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor
 \subsection{Sequential model}
 Parameters were estimated using the R \verb+glm+ function and \verb+VGAM::vglm+. 
 The cloglog link model failed due to numerical errors when using the \verb+vglm+ function. 
-Parameter estimates were identical to the original study (Table~\ref{tab:tab3}).
+Parameter estimates were identical to the original study (Table~\ref{tab:tab3}) within the  precision reported in \citep{candy1991modeling}.
 
 
 
@@ -226,4 +226,4 @@ The GLIM code from \citep{candy1990biology} uses multiple thresholding steps dur
 The numerical instability of the complementary log-log link may have contributed to the failure to fit either of the two corresponding models using the \verb+VGAM::vglm+ function. 
 However, despite several troubleshooting attempts the exact reason for the numerical issues leading to the failure could not be established.
 
-
+\afterpage{\clearpage}

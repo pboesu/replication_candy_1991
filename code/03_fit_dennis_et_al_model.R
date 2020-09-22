@@ -1,4 +1,5 @@
 library(dplyr)
+library(kableExtra)
 budworm_counts <- readr::read_csv('data/budworm_counts.csv')
 
 #optimize likelihood directly rather than doing the IRLS approach
