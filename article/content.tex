@@ -45,7 +45,14 @@ The ordinal regression model of~\citep{candy1991modeling} is specified in terms 
 &=N_iG(\alpha_j + \beta z_i)
 \end{alignat}
 where $G$ is the cumulative probability density function of $S(t)$, $\alpha_j$ are ordered thresholds or cut-point parameters, $\beta$ is a vector of regression parameters and $z_i$ is a vector of predictor variables.
-If the probability of an individual being in stage $j$ or earlier at time $t_i$ is $$\mu_{ij} = \mathbf{E}(m_{ij})/N_i$$ one can interpret $G^{-1}$ as the link function of a generalised linear model (GLM) with the linear predictor $$\eta_{ij}=\alpha+\beta z_i$$
+If the probability of an individual being in stage $j$ or earlier at time $t_i$ is 
+
+$$\mu_{ij} = \mathbf{E}(m_{ij})/N_i$$
+
+ one can interpret $G^{-1}$ as the link function of a generalised linear model (GLM) with the linear predictor 
+
+$$\eta_{ij}=\alpha+\beta z_i$$
+
 This ordinal regression model is commonly known as the cumulative model~\citep{burkner2019ordinal}, and is applied to the budworm data in \citep{candy1991modeling} using the logit and complementary log-log (cloglog) link functions. 
 In both cases the parameterisation results in a constant variance for $S(t)$.
 For the purpose of parameter estimation \citet{candy1991modeling} re-expressed the model in terms of stage-specific counts $n_{ij}$  
@@ -93,18 +100,25 @@ A set of example macros for the software package \verb+GLIM+ \citep{aitkin1989st
 A different class of ordinal regression model can be derived by treating the observations as the result of a strictly ordered counting process, i.e. to achieve a stage $j$, all lower stages $1,\dots,j-1$ have to be achieved first. 
 The general form of this model is known as the sequential model, and rather than assuming a single latent process $S(t)$ as in the cumulative model there is a latent continuous variable $S_j$ for each category $j$~\citep{burkner2019ordinal}. 
 Analogous to the cumulative model it can be framed as a GLM 
+
 \begin{equation}
 S_j = \eta + \epsilon_j
 \end{equation}
+
 with a linear predictor $\eta$ and an error term $\epsilon_j$ which has mean zero and is distributed following some distribution $G$. 
 This leads to a model of the form 
+
 \begin{equation}
 Pr(S = a_j|S \geq a_j, \eta) = G(a_j - \eta)
 \end{equation}
+
 When $G$ is the logistic distribution this model is also known as the continuation ratio model~\citep{fienberg1980analysis,burkner2019ordinal}. 
 Confusingly, there are two common versions of the model in the literature both using this name. 
-The one outlined above describing the probability of the sequential process \emph{stopping} at stage $j$, and the other describing the probability of the process \emph{continuing} beyond stage $j$, i.e. $Pr(S > a_j | S \geq a_j, \eta)$ \citep{burkner2019ordinal,VGAM}. 
-The paper replicated here \citep{candy1991modeling}  used the stopping parameterisation of this model.
+The one outlined above describing the probability of the sequential process \emph{stopping} at stage $j$, and the other describing the probability of the process \emph{continuing} beyond stage $j$, i.e. 
+
+$Pr(S > a_j | S \geq a_j, \eta)$ \citep{burkner2019ordinal,VGAM}. 
+
+The paper replicated here \citep{candy1991modeling} used the stopping parameterisation of this model.
 In their notation the expected value for the stage-specific counts $n_{ij}$ is
 \begin{alignat}{3}
 \mathbf{E}(n_{ij})&=N_i G(\beta_{01} + \beta_{11}t_i), &j&=1 \label{eq:candy_sm_counts}\\
