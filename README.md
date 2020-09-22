@@ -9,15 +9,14 @@ This project reimplements a number of ordinal regression models from Dennis et a
 
 The reproduction was successful and has been submitted to [ReScience C](https://rescience.github.io/) 
 
-### Model reproduction
+### Data
+The `data/` subdirectory contains the dataset that was used in both original publications in its original form, as well as three reformatted versions that fulfill the input requirements for the replication code.   
 
+### Model fitting 
 All `R` scripts required to reformat the original data and reproduce the statistical models are in the `code/` subdirectory.
 They assume that the project folder is used as the working directory.    
 Additional `SAS` and `GLIM` code from the original publications is provided in the `code/` directory for completeness.
 
-
-### Data
-The `data/` subdirectory contains the dataset that was used in both original publications in its original form, as well as three reformatted versions that fulfill the input requirements for the replication code.   
 
 #### Initial setup
 The project makes use of the the `renv` package for project-local R dependency management. To reproduce the replication, I recommend to follow the following steps, assuming *R v3.6.0 or later* is already installed:
@@ -32,10 +31,10 @@ git clone https://github.com/pboesu/replication_candy_1991
 ```r
 renv::restore()
 ```
-Agree to installing the required packages when prompted. Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
+4. Agree to installing the required packages when prompted. Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
 
 
-#### Running the model
+#### Running the models
 After setup, the analysis can be run to reproduce all figures and tables by sourcing the `R` scripts in sequence
 
 ```r
