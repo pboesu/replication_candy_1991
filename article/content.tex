@@ -69,9 +69,10 @@ I therefore created an R version of the estimation procedure which directly opti
 \citet{dennis1986stochastic} used a different parameterisation of the ordinal model with a logit link, i.e. assuming a logistic distribution for $S(t)$, such that the probability that an insect's development at time $t$ has not exceeded $s$ amounts to 
 \begin{equation}
 Pr(S(t) \leq s) = \left\{ 1 + \exp\left[-\left(\frac{s-t}{\sqrt{b^2t}}\right)\right]\right\}^{-1}
+\label{eqn:cumpropcdf}
 \end{equation}
 where $b^2$ is a positive constant. 
-This distribution has a mean of $t$ and a variance which increases proportional to the mean as $(\pi^2/3)b^2t$.
+The cumulative distribution function in Eqn.~\ref{eqn:cumpropcdf} corresponds to a logistic distribution with a mean of $t$ and a variance which increases proportional to the mean as $(\pi^2/3)b^2t$.
 At any fixed time $t$ the thresholds $a_j$ segment the probability distribution function in to $r$ parts and the area under the curve between $a_{j-1}$ and $a_j$ gives the probability that the insect will be in stage $j$ at time $t$.
 
 This modelling approach is applied to data consisting of samples~$i$ that record the number of insects $x_{ij}$ in stage $j$ at times $t_1, t_2, \dots, t_q$ and the $x_{ij}$ are assumed to be random samples from a multinomial distribution with corresponding multinomial probabilities~$p_{ij}$
