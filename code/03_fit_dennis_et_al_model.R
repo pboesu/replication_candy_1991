@@ -73,8 +73,9 @@ sub_header <- paste(c(paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$','Method', 'E
 #typeset table
 dennis_model_table <- rbind(dennis_model_estimates, candy_nll_estimates) %>%
   select(-model, -link) %>%
+  relocate(fit, .before = V1) %>%
 kable(digits = 3, format = 'latex', align = 'c', row.names = FALSE,
-                 col.names = c(paste('$a_',1:6,'$', sep=''),'$b^2$','Method', 'Eqn.'), escape = FALSE, booktabs = TRUE) %>% row_spec(row = 3, extra_latex_after = paste("\\midrule", sub_header, "\\midrule"))
+                 col.names = c('Method',paste('$a_',1:6,'$', sep=''),'$b^2$', 'Eqn.'), escape = FALSE, booktabs = TRUE) %>% row_spec(row = 3, extra_latex_after = paste("\\midrule", sub_header, "\\midrule"))
 
 cat(dennis_model_table,
     file = 'outputs/dennis_model_table.tex')
