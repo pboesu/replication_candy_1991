@@ -25,7 +25,7 @@ nll_cm_dennis <- function(par, count, total, stage, ddeg){
   nll <- -1*sum(count*log(pred))
   return(nll)
 }
-logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1), method = 'L-BFGS-B', lower = rep(0,7))
 #logit_cm_dennis_nll <- add_se_vcov_nll_hessian(logit_cm_dennis_nll)
 
 predicted_proportion <- function(par, stage, ddeg){
@@ -68,7 +68,7 @@ dennis_model_estimates$eqn <- c("\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}", "\
 
 library(kableExtra)
 #create sub heading string to sepearat the results for the two different parameterisations
-sub_header <- paste(c(paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$','Method', 'Eqn. \\\\'), collapse = " & ")
+sub_header <- paste(c('Method', paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$', 'Eqn. \\\\'), collapse = " & ")
 
 #typeset table
 dennis_model_table <- rbind(dennis_model_estimates, candy_nll_estimates) %>%
