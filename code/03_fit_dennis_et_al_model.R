@@ -2,7 +2,7 @@ library(dplyr)
 library(kableExtra)
 budworm_counts <- readr::read_csv('data/budworm_counts.csv')
 
-#optimize likelihood directly rather than doing the IRLS approach
+#optimize likelihood directly rather than doing the IRLS approach. This is a quite literal translation of the original SAS code.
 nll_cm_dennis <- function(par, count, total, stage, ddeg){
   A1 <- par[1]
   A2 <- par[2]
@@ -26,6 +26,32 @@ nll_cm_dennis <- function(par, count, total, stage, ddeg){
   return(nll)
 }
 logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1), method = 'L-BFGS-B', lower = rep(0,7))
+
+#This is an alternative implementation that uses the R function stats::plogis 
+nll_cm_dennis_plogis <- function(par, count, total, stage, ddeg){
+  A1 <- par[1]
+  A2 <- par[2]
+  A3 <- par[3]
+  A4 <- par[4]
+  A5 <- par[5]
+  A6 <- par[6]
+  BB <- par[7]
+  pred <- weight <- rep(NA, length(total))
+  for (i in seq_along(total)){
+    pred[i] <- (stage[i]==1)*stats::plogis(A1, location = ddeg[i], scale = sqrt(BB*ddeg[i]))+
+      (stage[i]==2)*(stats::plogis(A2, location = ddeg[i], scale = sqrt(BB*ddeg[i]))-stats::plogis(A1, location = ddeg[i], scale = sqrt(BB*ddeg[i])))+
+      (stage[i]==3)*(stats::plogis(A3, location = ddeg[i], scale = sqrt(BB*ddeg[i]))-stats::plogis(A2, location = ddeg[i], scale = sqrt(BB*ddeg[i])))+
+      (stage[i]==4)*(stats::plogis(A4, location = ddeg[i], scale = sqrt(BB*ddeg[i]))-stats::plogis(A3, location = ddeg[i], scale = sqrt(BB*ddeg[i])))+
+      (stage[i]==5)*(stats::plogis(A5, location = ddeg[i], scale = sqrt(BB*ddeg[i]))-stats::plogis(A4, location = ddeg[i], scale = sqrt(BB*ddeg[i])))+
+      (stage[i]==6)*(stats::plogis(A6, location = ddeg[i], scale = sqrt(BB*ddeg[i]))-stats::plogis(A5, location = ddeg[i], scale = sqrt(BB*ddeg[i])))+
+      (stage[i]==7)*(stats::plogis(A6, location = ddeg[i], scale = sqrt(BB*ddeg[i]), lower.tail = FALSE))
+  }
+  pred <- pmax(pred, 1e-8)
+  nll <- -1*sum(count*log(pred))
+  return(nll)
+}
+
+logit_cm_dennis_nll_plogis <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis_plogis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1, maxit = 500), method = 'L-BFGS-B', lower = rep(1e-12,7))
 #logit_cm_dennis_nll <- add_se_vcov_nll_hessian(logit_cm_dennis_nll)
 
 predicted_proportion <- function(par, stage, ddeg){
@@ -59,11 +85,11 @@ candy_nll_estimates <- readRDS("outputs/candy_nll_estimates.RDS") %>% filter(V1 
 
 
 #paste together fits and
-dennis_model_estimates <- as.data.frame(rbind(dennis_par,sas_par, unname(logit_cm_dennis_nll$par), candy_par))
+dennis_model_estimates <- as.data.frame(rbind(dennis_par,sas_par, unname(logit_cm_dennis_nll$par), unname(logit_cm_dennis_nll_plogis$par), candy_par))
 dennis_model_estimates$model <- "cumulative"
 dennis_model_estimates$link <- "logit"
-dennis_model_estimates$fit <- c("Original \\citep{kemp1986stochastic}", "SAS \\verb+NLIN+", "R \\verb+optim+","Original \\citep{candy1991modeling}")
-dennis_model_estimates$eqn <- c("\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}","\\ref{eq:candy_cm_count_form}")
+dennis_model_estimates$fit <- c("Original \\citep{kemp1986stochastic}", "SAS \\verb+NLIN+", "R \\verb+optim+","R \\verb+optim/plogis+", "Original \\citep{candy1991modeling}")
+dennis_model_estimates$eqn <- c("\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}","\\ref{eq:dennis_cm}","\\ref{eq:candy_cm_count_form}")
 
 
 library(kableExtra)
@@ -75,7 +101,7 @@ dennis_model_table <- rbind(dennis_model_estimates, candy_nll_estimates) %>%
   select(-model, -link) %>%
   relocate(fit, .before = V1) %>%
 kable(digits = 3, format = 'latex', align = 'c', row.names = FALSE,
-                 col.names = c('Method',paste('$a_',1:6,'$', sep=''),'$b^2$', 'Eqn.'), escape = FALSE, booktabs = TRUE) %>% row_spec(row = 3, extra_latex_after = paste("\\midrule", sub_header, "\\midrule"))
+                 col.names = c('Method',paste('$a_',1:6,'$', sep=''),'$b^2$', 'Eqn.'), escape = FALSE, booktabs = TRUE) %>% row_spec(row = 4, extra_latex_after = paste("\\midrule", sub_header, "\\midrule"))
 
 cat(dennis_model_table,
     file = 'outputs/dennis_model_table.tex')
