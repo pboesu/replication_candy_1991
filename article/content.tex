@@ -62,7 +62,7 @@ For the purpose of parameter estimation \citet{candy1991modeling} re-expressed t
 \end{equation}
 and fits it using a Poisson likelihood \citep{thompson1981composite}. 
 No code or initial values for the likelihood optimisation are provided for this estimation procedure in the original paper.   
-I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for Equation~\ref{eq:candy_cm_count_form} using the \verb+optim+ function.
+I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for Equation~\ref{eq:candy_cm_count_form} using the BFGS method in the \verb+optim+ function.
  The cumulative model is implemented in various R packages, including in the \verb+vglm+ function in \verb+VGAM+ \citep{VGAM} and the \verb+clm+ function in \verb+ordinal+ \cite{ordinal} and for comparison I also fit the models using these functions.
 
 \subsection{Cumulative model with proportional variance}
@@ -91,10 +91,10 @@ where $C$ is a combinatorial constant that is independent of the parameter value
 
 \citet{dennis1986stochastic} provided SAS code and initial values to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. 
 This was updated to run in a contemporary version of SAS (SAS 9.4) and is provided in the article code repository. 
-However, since SAS is a proprietary software package, I implemented an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
+However, since SAS is a proprietary software package, I implemented two R versions of the estimation procedure which both directly optimize the log-likelihood (\ref{eq:dennis_loglik}) using the L-BFGS-B optimisation routine \citep{byrd1995limited} in the R \verb+optim+ function. The first implemetantion is a direct translation of the SAS code which uses a literal implementation of the logistic cumulative distribution and employs a lower parameter bound of 0 and initial values provided in \citep{dennis1986stochastic} for the estimation. The second implementation makes use of the R function \verb+stats::plogis+ to implement the logistic CDF  and employs a lower parameter bound of $10^{-12}$ and the same initial values as above.
 
 \citet{candy1991modeling} re-expressed the proportional variance model (Eqn.~\ref{eq:dennis_cm}) to match the form of Eqn.~\ref{eq:candy_cm_count_form}, which results in the following re\-para\-meter\-isation $\alpha_j = a_j/b$, $\beta = -1/b$, and $z_i = \sqrt{t_i}$, and uses the Poisson likelihood approach described in section~\ref{sec:const_var_cm} for parameter estimation. 
-A set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} is provided in an earlier manuscript by the same author \citep{candy1990biology}. GLIM is no longer actively developed or distributed, but initial values from the GLIM code were used in the estimation with R \verb+optim+.
+A set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} is provided in an earlier manuscript by the same author \citep{candy1990biology}. GLIM is no longer actively developed or distributed, but initial values from the GLIM code were used in the estimation with the BFGS method of R \verb+optim+.
 
 \subsection{Sequential model}
 A different class of ordinal regression model can be derived by treating the observations as the result of a strictly ordered counting process, i.e. to achieve a stage $j$, all lower stages $1,\dots,j-1$ have to be achieved first. 
