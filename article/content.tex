@@ -178,7 +178,7 @@ Parameter estimates were close to those of the original study for the two R pack
 
 The original SAS code provided in \citep{dennis1986stochastic} required minimal updates to run in a contemporary version of SAS (SAS 9.4). 
 Translating the model code to R was straightforward once I took the decision to implement a direct minimisation of the negative log likelihood with \verb+optim+.  
-Parameter estimates from SAS NLIN and R optim (Table.~\ref{tab:tab2}) were virtually identical, but differed slightly from the parameter estimates presented in \citep{kemp1986stochastic}, which was assumed to be the original source for the parameter estimates, as no parameter estimates were presented in \citep{dennis1986stochastic}. 
+Parameter estimates from SAS \verb+NLIN+ and both R \verb+optim+ implementations (Table.~\ref{tab:tab2}) were virtually identical, but differed slightly from the parameter estimates presented in \citep{kemp1986stochastic}, which was assumed to be the original source for the parameter estimates, as no parameter estimates were presented in \citep{dennis1986stochastic}. 
 Based on these three sets of parameter estimates it was also possible to redraw two figures from \citep{dennis1986stochastic}. 
 Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor parameter differences there is an overall good agreement between the original results and the replication.
 
