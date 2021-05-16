@@ -79,13 +79,13 @@ kable(digits = 3, format = 'latex', align = 'c', row.names = FALSE,
 cat(dennis_model_table,
     file = 'outputs/dennis_model_table.tex')
 
-#figure 2
+#Replicate Figure 2 of Dennis et al. (Figure 1 of the replication manuscript)
 logistic_pdf <- function(s, t, bb){
   exp((s-t)/(sqrt(bb*t)))/(sqrt(bb*t)*(1+exp((s-t)/(sqrt(bb*t))))^2)
 }
 s <- 0:800
 #redraw fig 2 using parameter estimates from Kemp
-pdf('figures/dennis_fig2.pdf', width = 10, height = 7)
+pdf('figures/fig1_dennis_fig2.pdf', width = 10, height = 7)
 plot(s, logistic_pdf(s, 50, 1.559), type='l', ylab = "Probability density", ylim = c(0,0.031), xaxs = 'i', yaxs='i')
 for (t in c(150,250,350,450,550,650)){
   lines(s, logistic_pdf(s, t, 1.559))
@@ -101,8 +101,9 @@ legend('topright',lty = 1, col = c('black','#fc8d59'), legend = c('Kemp et al. 1
 text(dennis_par[1:6]+10, 0.030, latex2exp::TeX(c('a_1','a_2','a_3','a_4','a_5','a_6')))
 text(c(50,150,250,350,450,550,650),c(0.0305,0.018,0.014,0.012,0.011,0.01,0.009), paste('t =',c(50,150,250,350,450,550,650)))
 dev.off()
-#redraw fig 3
-pdf('figures/dennis_fig3.pdf', width = 10, height = 7)
+
+#Redraw Fig 3 of Dennis et al. (Fig. 2 of the replication manuscript)
+pdf('figures/fig2_dennis_fig3.pdf', width = 10, height = 7)
 plot(s,predicted_proportion(dennis_par,rep(1, length(s)),s), type = 'l', ylab = 'Proportion in stage', xlab = 'Time (degree-days)')
 for (a in 2:7){
   lines(s,predicted_proportion(dennis_par,rep(a, length(s)),s))
