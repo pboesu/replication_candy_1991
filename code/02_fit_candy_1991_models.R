@@ -23,6 +23,8 @@ poisson_nll_cm_candy <- function(par, data, linkinv = gtools::inv.logit){
                       total[i] * (linkinv(alpha[alpha_index[i]] + beta*(ddeg[i])) - linkinv(alpha[alpha_index[i]-1] + beta*(ddeg[i])))
     )
   }
+  #avoid numerical underflow during fitting
+  pred_n <- pmax(pred_n, .Machine$double.xmin)
   nll = sum(-1*dpois(data$count, pred_n, log=T))
   return(nll)
 }
@@ -37,6 +39,8 @@ poisson_nll_cm_candy_dennis <- function(par, data){
                              total[i]*((exp(alpha[alpha_index[i]]/sqrt(ddeg[i]) + beta*sqrt(ddeg[i]))/(1 + exp(alpha[alpha_index[i]]/sqrt(ddeg[i]) + beta*sqrt(ddeg[i])))) - 
                                          (exp(alpha[alpha_index[i]-1]/sqrt(ddeg[i]) + beta*sqrt(ddeg[i]))/(1 + exp(alpha[alpha_index[i]-1]/sqrt(ddeg[i]) + beta*sqrt(ddeg[i])))))
     )}
+  #avoid numerical underflow during fitting
+  pred_n <- pmax(pred_n, .Machine$double.xmin)
   nll = -1*sum(dpois(data$count, pred_n, log=T))
   return(nll)
 }
