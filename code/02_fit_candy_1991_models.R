@@ -4,7 +4,7 @@ library(dplyr)
 # read data ddeg day-degrees, total total individuals in stage,  
 #! stage stage number 1-5 instars, 6 pupa, 7 adult
 #! count total individuals in stage
-budworm_counts <- readr::read_csv('data/budworm_counts.csv')
+budworm_counts <- readr::read_csv('data/budworm_counts.csv', col_types = "dddd")
 budworm_counts$occ <- as.numeric(as.factor(budworm_counts$ddeg)) #encode sampling occasion
 budworm_counts$alpha_index = budworm_counts$stage + 1 #encode an index variable to facilitate fitting the linear predictor
 budworm_counts <- group_by(budworm_counts, ddeg) %>%
@@ -46,18 +46,18 @@ poisson_nll_cm_candy_dennis <- function(par, data){
 }
 
 #get parameter estimates for cumulative models
-logit_cm_candy_nll <- optim(par = c(10,20,30,40,50,60,-0.6), poisson_nll_cm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+logit_cm_candy_nll <- optim(par = c(10,20,30,40,50,60,-0.6), poisson_nll_cm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=0), method = 'BFGS')
 #minimizing neg log likelihood leads to different parameter estimates than minimizing deviance
 logit_cm_candy_nll$par
 #residual deviance
 -2*(-1*logit_cm_candy_nll$value-sum(dpois(budworm_counts$count,budworm_counts$count, log = TRUE)))
 
-cloglog_cm_candy_nll <- optim(par = c(5,8,12,19,25,30,-0.6), poisson_nll_cm_candy, data = budworm_counts, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+cloglog_cm_candy_nll <- optim(par = c(5,8,12,19,25,30,-0.6), poisson_nll_cm_candy, data = budworm_counts, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, hessian = TRUE, control = list(trace=0), method = 'BFGS')
 cloglog_cm_candy_nll$par 
 #residual deviance
 -2*(-1*cloglog_cm_candy_nll$value-sum(dpois(budworm_counts$count,budworm_counts$count, log = TRUE)))
 
-logit_dennis_cm_candy_nll <- optim(par = c(101.0, 71.2+101.0, 121.7+101.0, 186.2+101.0,289.9+101.0,400.3+101.0,-0.6), poisson_nll_cm_candy_dennis, data = budworm_counts, hessian = TRUE, control = list(trace=1), method = 'BFGS')
+logit_dennis_cm_candy_nll <- optim(par = c(101.0, 71.2+101.0, 121.7+101.0, 186.2+101.0,289.9+101.0,400.3+101.0,-0.6), poisson_nll_cm_candy_dennis, data = budworm_counts, hessian = TRUE, control = list(trace=0), method = 'BFGS')
 logit_dennis_cm_candy_nll$par
 #std_error_from_nll_hessian(logit_cm_candy_nll)
 
