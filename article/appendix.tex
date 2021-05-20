@@ -1,0 +1,13 @@
+\section{Appendix: Sensitivity of the optimisation procedure to intial values}
+The sensitivity of parameter estimates for the cumulative model with constant variance (Eqn.~\ref{eq:candy_cm_count_form}) obtained using the direct likelihood optimisation with \verb+optim+ was assessed by simulation.
+Simulations consisted of drawing a set of random initial values. To preserve the ordering of the cut-point parameters $\alpha_i$, their initial values $\alpha^{\circ}_i$ were assembled as the cumulative sum of six independent draws $$x_j \sim \mathrm{Uniform}(1,20),$$ i.e. $$\alpha^{\circ}_i = \sum_{j=1}^i x_j.$$ The initial value for $\beta$ was drawn as $$\beta^{\circ}\sim\mathrm{Uniform}(-1,1).$$
+
+Optimisation proceeded using the likelihood outlined in with a numerical threshold to prevent the Poisson likelihood from numerical underflowing. As this allowed convergence at an infinite likelihood, the likelihood was evaluated without thresholding at the converged parameter values and parameters were only retained when the unthresholded likelihood was finite.
+
+This procedure resulted in initial value ranges of 
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{../figures/fig3_initial_value_sensitivity.pdf}
+  \caption{Sensitivity of optimisation results to initial values. The lower triangle and diagonal elements of the scatterplot matrix (grey symbols) show pairwise plots of parameter estimates $\hat{\alpha}_i, \hat{\beta}$ for the logit-link cumulative model with constant variance against corresponding initial values $\alpha^{\circ}_i, \beta^{\circ}$. The upper triangle shows pairwise plots of the initial values for the same model parameters against each other. Green dots indicate succesfull convergence of the optimisation, yellow dots indicate convergence failures. Optimisation failed whenever $\beta^{\circ}>0.8$, furthermore convergence failures were more likely when $\beta^{\circ}\approx 0$.}
+  \label{fig:fig3}
+\end{figure} 
