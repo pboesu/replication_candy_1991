@@ -1,9 +1,9 @@
 library(VGAM)
-budworm_table <- readr::read_csv('data/budworm_table.csv')
+budworm_table <- readr::read_csv('data/budworm_table.csv', col_types = 'dddddddddd')
 
 #fit cumulative model
 budworm_cumulative_cloglog_vglm <- try(vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
-                                        cumulative(reverse = FALSE, link = clogloglink(bvalue = 1e-8), parallel = TRUE), coefstart = c(-3,-6,-8,-10,-14,-17,0.01), data = budworm_table, trace=T))#fails
+                                        cumulative(reverse = FALSE, link = clogloglink(bvalue = 1e-8), parallel = TRUE), coefstart = c(3,6,8,10,14,17,-0.04), data = budworm_table, trace=T))#fails
 
 
 budworm_cumulative_logit_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
