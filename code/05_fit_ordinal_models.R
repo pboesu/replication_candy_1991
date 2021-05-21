@@ -1,6 +1,6 @@
 #NB: package ordinal fits this without problems.... 
 library(ordinal)
-budworm_individuals <- readr::read_csv('data/budworm_individuals.csv')
+budworm_individuals <- readr::read_csv('data/budworm_individuals.csv', col_types = "dddd")
 
 budworm_cm_cloglog_ordinal <- clm(factor(stage) ~ ddeg, data = budworm_individuals, link = 'cloglog')
 summary(budworm_cm_cloglog_ordinal)
