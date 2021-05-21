@@ -178,11 +178,10 @@ Parameter estimates were close to those of the original study for the two R pack
 The original SAS code provided in \citep{dennis1986stochastic} required minimal updates to run in a contemporary version of SAS (SAS 9.4). 
 Translating the model code to R was straightforward once I took the decision to implement a direct minimisation of the negative log likelihood with \verb+optim+.  
 Parameter estimates from SAS NLIN and R optim (Table.~\ref{tab:tab2}) were virtually identical, but differed slightly from the parameter estimates presented in \citep{kemp1986stochastic}, which was assumed to be the original source for the parameter estimates, as no parameter estimates were presented in \citep{dennis1986stochastic}. 
+The observed differences in estimates were $<1$\% for the cut-point parameters $\alpha_i$, but c. 9\% for $\beta$.
 Based on these three sets of parameter estimates it was also possible to redraw two figures from \citep{dennis1986stochastic}. 
-Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor parameter differences there is an overall good agreement between the original results and the replication.
+Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively, show that despite the observed parameter differences  there is an overall good agreement between the original results and the replication.
 
-
- 
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{../figures/fig1_dennis_fig2.pdf}
@@ -233,7 +232,10 @@ However, the mathematical and verbal descriptions of the models were detailed en
 GLIM code of the cumulative model with proportional variance was available from an earlier manuscript~\citep{candy1990biology}. 
 This allowed me to use the same initial values as the original study for this model. 
 Initial values for the model with constant variance had to be guessed.
-The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}. Additional simulations showed that the coefficient of variation for estimates derived from a wide range of initial values was between 6.3\% and 7.1\% whenenver the model converged succesfully. Th and this may explain the difference in the parameter estimates between the different methods. 
+The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}. 
+Additional simulations (Appendix) showed that the coefficient of variation for estimates derived from a wide range of initial values was c. 0.6\% and c. 1.7\% for the logit and cloglog models, respectively, whenenver the model converged succesfully (Table~\ref{tab:tabS2}).
+This means the observed differences between the published parameter estimates and those obtained using R \verb+optim+ are on the order of approximately 2 standard deviations of the expected variation caused by the choice of initial values.
+The uncertainty about initial values may therefore explain the differences in the parameter estimates between the different methods. 
 Another factor may be slight differences in the numerical implementation of the inverse link functions. 
 Naive implementations of both the inverse logit and inverse complementary log-log function suffer from numerical underflow and/or overflow. 
 The GLIM code from \citep{candy1990biology} uses multiple thresholding steps during the calculation of the linear predictor to mitigate against this, whereas the R implementation makes use of a single thresholding step in the inverse link function (\verb+gtools::inv.logit+~\citep{gtools} and \verb+VGAM::clogloglink+, respectively).  
