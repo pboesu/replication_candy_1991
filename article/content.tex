@@ -62,7 +62,7 @@ For the purpose of parameter estimation \citet{candy1991modeling} re-expressed t
 \end{equation}
 and fits it using a Poisson likelihood \citep{thompson1981composite}. 
 No code or initial values for the likelihood optimisation are provided for this estimation procedure in the original paper.   
-I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for Equation~\ref{eq:candy_cm_count_form} using the \verb+optim+ function.
+I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for Equation~\ref{eq:candy_cm_count_form} using the BFGS method in the \verb+optim+ function.
  The cumulative model is implemented in various R packages, including in the \verb+vglm+ function in \verb+VGAM+ \citep{VGAM} and the \verb+clm+ function in \verb+ordinal+ \cite{ordinal} and for comparison I also fit the models using these functions.
 
 \subsection{Cumulative model with proportional variance}
@@ -92,10 +92,10 @@ where $C$ is a combinatorial constant that is independent of the parameter value
 
 \citet{dennis1986stochastic} provided SAS code and initial values to estimate the parameters under this likelihood using an interatively reweighted non-linear least squares approach based on \verb+PROC NLIN+. 
 This was updated to run in a contemporary version of SAS (SAS 9.4) and is provided in the article code repository. 
-However, since SAS is a proprietary software package, I implemented an R version of the estimation procedure which directly optimizes the log-likelihood (\ref{eq:dennis_loglik}) using the \verb+optim+ function and initial values provided in \citep{dennis1986stochastic}.
+However, since SAS is a proprietary software package, I implemented two R versions of the estimation procedure which both directly optimize the log-likelihood (\ref{eq:dennis_loglik}) using the L-BFGS-B optimisation routine \citep{byrd1995limited} in the R \verb+optim+ function. The first implemetantion is a direct translation of the SAS code which uses a literal implementation of the logistic cumulative distribution and employs a lower parameter bound of 0 and initial values provided in \citep{dennis1986stochastic} for the estimation. The second implementation makes use of the R function \verb+stats::plogis+ to implement the logistic CDF  and employs a lower parameter bound of $10^{-12}$ and the same initial values as above.
 
 \citet{candy1991modeling} re-expressed the proportional variance model (Eqn.~\ref{eq:dennis_cm}) to match the form of Eqn.~\ref{eq:candy_cm_count_form}, which results in the following re\-para\-meter\-isation $\alpha_j = a_j/b$, $\beta = -1/b$, and $z_i = \sqrt{t_i}$, and uses the Poisson likelihood approach described in section~\ref{sec:const_var_cm} for parameter estimation. 
-A set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} is provided in an earlier manuscript by the same author \citep{candy1990biology}. GLIM is no longer actively developed or distributed, but initial values from the GLIM code were used in the estimation with R \verb+optim+.
+A set of example macros for the software package \verb+GLIM+ \citep{aitkin1989statistical} is provided in an earlier manuscript by the same author \citep{candy1990biology}. GLIM is no longer actively developed or distributed, but initial values from the GLIM code were used in the estimation with the BFGS method of R \verb+optim+.
 
 \subsection{Sequential model}
 A different class of ordinal regression model can be derived by treating the observations as the result of a strictly ordered counting process, i.e. to achieve a stage $j$, all lower stages $1,\dots,j-1$ have to be achieved first. 
@@ -178,18 +178,19 @@ Parameter estimates were close to those of the original study for the two R pack
 
 The original SAS code provided in \citep{dennis1986stochastic} required minimal updates to run in a contemporary version of SAS (SAS 9.4). 
 Translating the model code to R was straightforward once I took the decision to implement a direct minimisation of the negative log likelihood with \verb+optim+.  
+
 Parameter estimates from SAS \verb+NLIN+ and both R \verb+optim+ implementations (Table.~\ref{tab:tab2}) were virtually identical, but differed slightly from the parameter estimates presented in \citep{kemp1986stochastic}, which was assumed to be the original source for the parameter estimates, as no parameter estimates were presented in \citep{dennis1986stochastic}. 
+The observed differences in estimates were $<1$\% for the cut-point parameters $\alpha_i$, but c. 9\% for $\beta$.
+
 Based on these three sets of parameter estimates it was also possible to redraw two figures from \citep{dennis1986stochastic}. 
-Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor parameter differences there is an overall good agreement between the original results and the replication.
+Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively, show that despite the observed parameter differences  there is an overall good agreement between the original results and the replication.
 
-
- 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{../figures/dennis_fig2.pdf}
+  \includegraphics[width=\textwidth]{../figures/fig1_dennis_fig2.pdf}
   \caption{Logistic PDF of the cumulative model with proportional variance (Equation~\ref{eq:dennis_cm}) plotted for fixed values of~$t$. 
   Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. 
-  The graph is based on the estimates in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). 
+  The graph is based on the estimates in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication using the R \texttt{optim} implementation (red lines). 
   This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
   \label{fig:fig1}
 \end{figure}
@@ -197,9 +198,9 @@ Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{../figures/dennis_fig3.pdf}
+  \includegraphics[width=\textwidth]{../figures/fig2_dennis_fig3.pdf}
   \caption{Proportion of insects expected in stages 1-7 under the cumulative logit model with proportional variance (Equation~\ref{eq:dennis_cm}) plotted as functions of time $t$.
-   Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication (red lines). 
+   Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication using the R \texttt{optim} implementation (red lines). 
    This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
   \label{fig:fig2}
 \end{figure} 
@@ -234,7 +235,10 @@ However, the mathematical and verbal descriptions of the models were detailed en
 GLIM code of the cumulative model with proportional variance was available from an earlier manuscript~\citep{candy1990biology}. 
 This allowed me to use the same initial values as the original study for this model. 
 Initial values for the model with constant variance had to be guessed.
-The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}, and this may explain the difference in the parameter estimates between the different methods. 
+The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}. 
+Additional simulations (Appendix) showed that the coefficient of variation for estimates derived from a wide range of initial values was c. 0.6\% and c. 1.7\% for the logit and cloglog models, respectively, whenenver the model converged succesfully (Table~\ref{tab:tabS2}).
+This means the observed differences between the published parameter estimates and those obtained using R \verb+optim+ are on the order of approximately 2 standard deviations of the expected variation caused by the choice of initial values.
+The uncertainty about initial values may therefore explain the differences in the parameter estimates between the different methods. 
 Another factor may be slight differences in the numerical implementation of the inverse link functions. 
 Naive implementations of both the inverse logit and inverse complementary log-log function suffer from numerical underflow and/or overflow. 
 The GLIM code from \citep{candy1990biology} uses multiple thresholding steps during the calculation of the linear predictor to mitigate against this, whereas the R implementation makes use of a single thresholding step in the inverse link function (\verb+gtools::inv.logit+~\citep{gtools} and \verb+VGAM::clogloglink+, respectively).  

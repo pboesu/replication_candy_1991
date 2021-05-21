@@ -44,6 +44,7 @@ source('code/03_fit_dennis_et_al_model.R')
 source('code/04_fit_VGAM_models.R')
 source('code/05_fit_ordinal_models.R')
 source('code/06_collate_parameter_tables.R')
+source('code/07_initial_value_sensitivity.R')
 ```
 
 The resulting figures are written to the `figures/` subdirectory, the resulting tables are written to the `outputs/` subdirectory. The manuscript can be recompiled from these.

@@ -1,9 +1,9 @@
 library(VGAM)
-budworm_table <- readr::read_csv('data/budworm_table.csv')
+budworm_table <- readr::read_csv('data/budworm_table.csv', col_types = 'dddddddddd')
 
 #fit cumulative model
 budworm_cumulative_cloglog_vglm <- try(vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
-                                        cumulative(reverse = FALSE, link = clogloglink(bvalue = 1e-8), parallel = TRUE), coefstart = c(-3,-6,-8,-10,-14,-17,0.01), data = budworm_table, trace=T))#fails
+                                        cumulative(reverse = FALSE, link = clogloglink(bvalue = 1e-8), parallel = TRUE), coefstart = c(3,6,8,10,14,17,-0.04), data = budworm_table))#fails
 
 
 budworm_cumulative_logit_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
@@ -27,7 +27,7 @@ budworm_sratio_logit_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, 
 #t(coef(budworm_sratio_logit_vglm, matrix = TRUE))
 
 budworm_sratio_cloglog_vglm <- try(vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg_cent,
-                                        sratio(link = "clogloglink", parallel = FALSE), data = budworm_table, trace=TRUE, control = vglm.control(checkwz = TRUE, wzepsilon = 0.5)))#sratio model with clogloglink fails because of some numerical issue - but check the expected binomial sample sizes. Candy writes "Note that the n_ij for which the binomial sample size is N^*_ij is zero must be expluded from the fit by by giving them a prior weight of zero. VGAM requires positive weights but suggests using weights "such as 1e-8" to effectively exclude observations"
+                                        sratio(link = "clogloglink", parallel = FALSE), data = budworm_table, control = vglm.control(checkwz = TRUE, wzepsilon = 0.5)))#sratio model with clogloglink fails because of some numerical issue - but check the expected binomial sample sizes. Candy writes "Note that the n_ij for which the binomial sample size is N^*_ij is zero must be expluded from the fit by by giving them a prior weight of zero. VGAM requires positive weights but suggests using weights "such as 1e-8" to effectively exclude observations"
 
 #save parameter estimates
 candy_vglm_sm_estimates <- as.data.frame(rbind(unname(coef(budworm_sratio_logit_vglm)[1:6]),unname(coef(budworm_sratio_logit_vglm)[7:12]),rep(NA,6),rep(NA,6)))

@@ -17,6 +17,9 @@ candy_nll_estimates <- readRDS("outputs/candy_nll_estimates.RDS")
 candy_ordinal_cm_estimates <- readRDS("outputs/candy_ordinal_cm_estimates.RDS")
 candy_vglm_cm_estimates <- readRDS("outputs/candy_vglm_cm_estimates.RDS")
 
+# calculate %-difference for cm_prop model optim method
+(candy_estimates[,1:7]-candy_nll_estimates[1:2,1:7])/candy_estimates[,1:7]*100
+
 #rearrange and filter to create table for cumulative model with constant variance
 cm_constant_var_table <- rbind(candy_estimates,candy_nll_estimates,candy_ordinal_cm_estimates,candy_vglm_cm_estimates) %>%
   filter(V1 < 50 | is.na(V1)) %>%

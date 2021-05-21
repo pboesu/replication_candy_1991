@@ -1,0 +1,51 @@
+\newpage
+%redefine figure and table counters
+\renewcommand\thefigure{S\arabic{figure}}    
+\setcounter{figure}{0} 
+\renewcommand\thetable{S\arabic{table}}    
+\setcounter{table}{0}
+
+\section{Appendix: Sensitivity of the optimisation procedure to intial values}
+\subsection{Approach}
+The sensitivity of parameter estimates for the cumulative model with constant variance (Eqn.~\ref{eq:candy_cm_count_form}) obtained using the direct likelihood optimisation with \verb+optim+ was assessed by simulation.
+Simulations consisted of drawing a set of random initial values. To preserve the ordering of the cut-point parameters $\alpha_i$, their initial values $\alpha^{\circ}_i$ were assembled as the cumulative sum of six independent draws $$x_j \sim \mathrm{Uniform}(1,20),$$ i.e. $$\alpha^{\circ}_i = \sum_{j=1}^i x_j.$$ The initial value for $\beta$ was drawn as $$\beta^{\circ}\sim\mathrm{Uniform}(-1,1).$$
+
+Optimisation proceeded using the likelihood outlined in with a numerical threshold to prevent the Poisson likelihood from numerical underflowing. As this allowed convergence at an infinite likelihood, the likelihood was evaluated without thresholding at the converged parameter values and parameters were only retained when the unthresholded likelihood was finite. 
+Parameters were further filtered to remove parameter sets where convergence was achieved at a finite likelihood, but with a substantially larger overall log-likelihood than the best model fit. Thresholds for this were determined empirically and set at 95 for the logit link and 100 for the cloglog model.
+
+\subsection{Results}
+The optimisation was reasonably robust for the logit link model. 82\% of simulations achieved convergence and of these over 99\% met the filtering threshold (Figure~\ref{fig:fig3}). Among the filtered parameter sets variability in the final estimates was small (parameter-wise coefficients of variation were all smaller than 0.7\%) and there was no correlation between initial values and parameter estimates (Table~\ref{tab:tabS2}). Convergence failed for initial values $\beta^{\circ}>0.8$, and convergence failures were likely, but not guaranteed for $\beta^{\circ}\approx 0$ (Figure~\ref{fig:fig4}).
+
+The optimisation of the cloglog model was much less stable. Only 54\% of simulations resulted in convergence, and of those fewer than half (43\%) met the filtering threshold. This is apparent as a large cluster of estimates deviating from the reference estimates in Figure~\ref{fig:fig3}. Variability in the filtered parameter estimates was larger than for the logit model, but still small in absolute terms (parameter-wise coefficients of variation were all between 1.6\% and 2.0\%) and there was no correlation between initial values and parameter estimates (Table~\ref{tab:tabS2}). Convergence failed for most $\beta^{\circ}>0$, and generally for $\beta^{\circ}>0.2$ convergence failures were likely, but not guaranteed for $\beta^{\circ}\approx 0$ (Figure~\ref{fig:fig5}). No general pattern was apparent for initial value combinations that led to the model converging at local optima far from the optimum associated with the reference parameter values.
+
+
+\begin{table}[bph]
+  \small
+    \centering
+    \caption{Summary statistics of parameter sensitivities to starting values for the cumulative model with constant variance (Eqn.~\ref{eq:candy_cm_count_form}). The coefficients of variation (CV), correlation coefficients between initial and convergend values $\rho^{\circ}$, and their corresponding p-values $P_\rho$ were calculated for the filtered parameter estimates only.
+    }
+  \input{../outputs/parameter_sens_table}
+  \label{tab:tabS2}
+\end{table}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{../figures/fig3_initial_value_sensitivity_unfiltered.pdf}
+  \caption{Optimisation results for randomly drawn initial values for the cumulative model with constant variance. Parameter estimates are coloured by the log of the negative log-likelihood of the corresponding model fit. Yellow broken lines correspond to parameter values reported in \citep{candy1991modeling}. The majority of initial values resulted in estimates close to the original publication for the logit model (bottom), but convergence to local optima far from the published parameters was common in the cloglog link model (top).}
+  \label{fig:fig3}
+\end{figure} 
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{../figures/fig4_initial_value_sensitivity_logit.pdf}
+  \caption{Sensitivity of optimisation results to initial values for the logit-link cumulative model with constant variance. The lower triangle and diagonal elements of the scatterplot matrix (grey symbols) show pairwise plots of filtered parameter estimates $\hat{\alpha}_i, \hat{\beta}$  against corresponding initial values $\alpha^{\circ}_i, \beta^{\circ}$. The upper triangle shows pairwise plots of the initial values for the same model parameters against each other. Green dots indicate succesfull convergence of the optimisation, yellow dots indicate convergence failures. Optimisation failed whenever $\beta^{\circ}>0.8$, furthermore convergence failures were more likely when $\beta^{\circ}\approx 0$.}
+  \label{fig:fig4}
+\end{figure} 
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{../figures/fig5_initial_value_sensitivity_cloglog.pdf}
+  \caption{Sensitivity of optimisation results to initial values for the cloglog-link cumulative model with constant variance. The lower triangle and diagonal elements of the scatterplot matrix (grey symbols) show pairwise plots of filtered parameter estimates $\hat{\alpha}_i, \hat{\beta}$ against corresponding initial values $\alpha^{\circ}_i, \beta^{\circ}$. The upper triangle shows pairwise plots of the initial values for the same model parameters against each other. Green dots indicate succesfull convergence of the optimisation, yellow dots indicate convergence failures. Optimisation failed for most $\beta^{\circ}>0$.}
+  \label{fig:fig5}
+\end{figure} 
