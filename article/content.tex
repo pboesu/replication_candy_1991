@@ -188,7 +188,7 @@ Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor
   \includegraphics[width=\textwidth]{../figures/fig1_dennis_fig2.pdf}
   \caption{Logistic PDF of the cumulative model with proportional variance (Equation~\ref{eq:dennis_cm}) plotted for fixed values of~$t$. 
   Area under the PDF between $a_{j-1}$ and $a_j$ gives the expected proportion of insects in stage $j$ at time $t$. 
-  The graph is based on the estimates in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication using the R \verb+optim+ implementation (red lines). 
+  The graph is based on the estimates in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication using the R \texttt{optim} implementation (red lines). 
   This figure replicates Figure 2 in \citep{dennis1986stochastic}.}
   \label{fig:fig1}
 \end{figure}
@@ -198,7 +198,7 @@ Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively,  show that despite minor
   \centering
   \includegraphics[width=\textwidth]{../figures/fig2_dennis_fig3.pdf}
   \caption{Proportion of insects expected in stages 1-7 under the cumulative logit model with proportional variance (Equation~\ref{eq:dennis_cm}) plotted as functions of time $t$.
-   Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication using the R \verb+optim+ implementation (red lines). 
+   Values of $a_j$ and $b^2$ used in the graph are the estimates given in Table 1 of \citep{kemp1986stochastic} (black lines) and the estimates from the replication using the R \texttt{optim} implementation (red lines). 
    This figure replicates Figure 3 in \citep{dennis1986stochastic}.}
   \label{fig:fig2}
 \end{figure} 
@@ -233,7 +233,7 @@ However, the mathematical and verbal descriptions of the models were detailed en
 GLIM code of the cumulative model with proportional variance was available from an earlier manuscript~\citep{candy1990biology}. 
 This allowed me to use the same initial values as the original study for this model. 
 Initial values for the model with constant variance had to be guessed.
-The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}, and this may explain the difference in the parameter estimates between the different methods. 
+The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}. Additional simulations showed that the coefficient of variation for estimates derived from a wide range of initial values was between 6.3\% and 7.1\% whenenver the model converged succesfully. Th and this may explain the difference in the parameter estimates between the different methods. 
 Another factor may be slight differences in the numerical implementation of the inverse link functions. 
 Naive implementations of both the inverse logit and inverse complementary log-log function suffer from numerical underflow and/or overflow. 
 The GLIM code from \citep{candy1990biology} uses multiple thresholding steps during the calculation of the linear predictor to mitigate against this, whereas the R implementation makes use of a single thresholding step in the inverse link function (\verb+gtools::inv.logit+~\citep{gtools} and \verb+VGAM::clogloglink+, respectively).  
