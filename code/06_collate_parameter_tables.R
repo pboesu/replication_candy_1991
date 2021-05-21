@@ -25,8 +25,9 @@ cm_constant_var_table <- rbind(candy_estimates,candy_nll_estimates,candy_ordinal
   filter(V1 < 50 | is.na(V1)) %>%
   arrange(desc(link),eqn) %>% 
   select(-eqn, -model) %>%
+  relocate(fit, .before = V1) %>%
   knitr::kable(digits = 2, format = 'latex', align = 'c', row.names = FALSE,
-               col.names = c(paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$','Link','Method'),
+               col.names = c('Method',paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$','Link'),
                linesep = c('', '', '', '\\addlinespace'), escape = FALSE, booktabs = TRUE)
 
 
@@ -52,7 +53,8 @@ sm_table <- as.data.frame(rbind(candy_sm_logit_beta0, candy_sm_logit_beta1, cand
   bind_rows(candy_sm_nll_estimates) %>%
   select(par, V1:V6, link, fit) %>%
   arrange(desc(link),par,fit) %>%
+  relocate(fit, .before = par) %>%
   knitr::kable(format = 'latex', escape = FALSE, booktabs = TRUE, digits = 3, linesep = c('', '', '\\addlinespace'),
-               col.names = c('Parameter', paste('$\\beta_{\\_',1:6,'}$', sep=''),'Link','Method'))
+               col.names = c('Method','Parameter', paste('$\\beta_{\\_',1:6,'}$', sep=''),'Link'))
 
 cat(sm_table, file = 'outputs/sm_table.tex')
