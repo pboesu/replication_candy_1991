@@ -60,6 +60,12 @@ sens_list_cloglog <- lapply(1:300, cm_cand_sens, linkinv = function(x){VGAM::clo
 simulation_results <- bind_rows(bind_rows(sens_list) %>% mutate(link = 'logit'),
                                 bind_rows(sens_list_cloglog) %>% mutate(link = 'cloglog'))
 
+# write out optimal starting parameters
+simulation_results %>% filter(link == 'cloglog') %>% filter(iter == iter[which.min(value)]) %>% pull(init) -> init_cloglog
+simulation_results %>% filter(link == 'logit') %>% filter(iter == iter[which.min(value)]) %>% pull(init) -> init_logit
+saveRDS(init_cloglog, 'outputs/init_cloglog.RDS')
+saveRDS(init_logit, 'outputs/init_logit.RDS')
+
 # reference parameter estimates from Candy 1991
 candy_cm_pars = tibble(ref_estimate = c(c(5.49,5.49+3.90,5.49+6.74,5.49+10.21,5.49+15.77,5.49+21.76,-0.0457),
                                         c(3.32,3.32+2.53,3.32+4.40,3.32+6.71,3.32+10.14,3.32+14.20,-0.0307)),
