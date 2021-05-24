@@ -1,9 +1,9 @@
-#budworm example from Dennis et al. 1986 / Candy 1991
+# budworm example from Dennis et al. 1986 / Candy 1991
 library(dplyr)
 
-#read raw data which has multiple columns side by side. columns are DDEG (degree days) TOT (total) LSF (life stage) NUM (count)
+# read raw data which has multiple columns side by side. columns are DDEG (degree days) TOT (total) LSF (life stage) NUM (count)
 budworm_raw <- as.matrix(read.table("data/budworm_candy_1991_raw.txt"))
-#reshape data
+# reshape data
 budworm_counts <- as.data.frame(rbind(budworm_raw[,1:4],budworm_raw[,5:8],budworm_raw[,9:12],budworm_raw[,13:16]))
 names(budworm_counts) <- c('ddeg','total','stage','count')
 budworm_counts %>% arrange(ddeg, stage) -> budworm_counts
