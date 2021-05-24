@@ -1,4 +1,6 @@
 # script to assess sensitivity of results to starting values
+# this script fits two models 300 times for random sets of initial values
+# computations can take about 15 minutes on a desktop computer
 library(ggplot2)
 library(dplyr)
 # load definitions of likelihood functions and related simulation functions
@@ -21,6 +23,8 @@ message('running 300 simulations')
 sens_list <- lapply(1:300, cm_cand_sens)
 message('running 300 simulations')
 sens_list_cloglog <- lapply(1:300, cm_cand_sens, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)})
+# Some fits will produce warnings about producing NaNs in dpois(). This warning occurs, because the code explicitly checks for false model convergence under infinite likelihoods.
+
 simulation_results <- bind_rows(bind_rows(sens_list) %>% mutate(link = 'logit'),
                                 bind_rows(sens_list_cloglog) %>% mutate(link = 'cloglog'))
 

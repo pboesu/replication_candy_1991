@@ -21,9 +21,6 @@ candy_vglm_cm_estimates$link <- c("logit","cloglog")
 candy_vglm_cm_estimates$fit <- c("R \\verb+vglm+")
 candy_vglm_cm_estimates$eqn <- c(NA,NA)
 saveRDS(candy_vglm_cm_estimates, "outputs/candy_vglm_cm_estimates.RDS")
-# create predictions to compare with candy original fit
-# pred_data <- expand.grid(ddeg = 0:800, stage = 1:7, total = 100)
-# pred_data$alpha_index = pred_data$stage + 1
 
 # fit sequential model
 budworm_sratio_logit_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,

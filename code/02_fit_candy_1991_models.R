@@ -41,7 +41,7 @@ saveRDS(candy_nll_estimates, "outputs/candy_nll_estimates.RDS")
 # get parameter estimates for sequential models
 logit_sm_candy_glm <- glm(cbind(count, n_star-count) ~ stage_factor:ddeg + stage_factor-1, family = binomial(link="logit"), data = budworm_counts, subset = stage < 7)
 cloglog_sm_candy_glm <- glm(cbind(count, n_star-count) ~ stage_factor:ddeg + stage_factor-1, family = binomial(link="cloglog"), data = budworm_counts, subset = stage < 7)
-
+# both fits produce warnings about fitted probabilities being numerically close to 0 or 1. This is further discussed in section 4.3 of the manuscript.
 
 # save parameter estimates
 candy_sm_nll_estimates <- as.data.frame(rbind(unname(coef(logit_sm_candy_glm)[1:6]),unname(coef(logit_sm_candy_glm)[7:12]), unname(coef(cloglog_sm_candy_glm)[1:6]), unname(coef(cloglog_sm_candy_glm)[7:12])))
