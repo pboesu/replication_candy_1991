@@ -66,23 +66,32 @@ loaded via a namespace (and not attached):
 
 
 #### Running the models
-After setup, the analysis can be run to reproduce all figures and tables by sourcing the `R` scripts in sequence
+After setup, the complete analysis can be run to reproduce all figures and tables by sourcing the `R` scripts 01 to 06 in sequence. 
+However, each individual analysis script can be run individually and the user is encouraged to step through the individual scripts to learn more about the replication, and in particular to see where particular model implementations fail or produce warnings.
+Note that the final script to reproduce the appendix will take about 15 minutes to run on a regular desktop.
 
 ```r
+# data wrangling script
 source('code/01_reformat_budworm_data.R')
+# fit the models from Candy (1991) by direct optimisation of the likelihood
 source('code/02_fit_candy_1991_models.R')
+# fit the models from Dennis et al. (1986) by direct optimisation of the likelihood
 source('code/03_fit_dennis_et_al_model.R')
+# fit sequential and cumulative models using VGAM
 source('code/04_fit_VGAM_models.R')
+# fit cumulative and sequential models using ordinal
 source('code/05_fit_ordinal_models.R')
+# assemble parameter estimates for typesetting
 source('code/06_collate_parameter_tables.R')
+# conduct simulations to assess sensitivity to initial values
 source('code/07_initial_value_sensitivity.R')
 ```
 
-The resulting figures are written to the `figures/` subdirectory, the resulting tables are written to the `outputs/` subdirectory. The manuscript can be recompiled from these.
+The reformatted data is written in CSV format to `data/`, the resulting figures are written to the `figures/` subdirectory, and the resulting tables are written as `.tex` files to the `outputs/` subdirectory. The manuscript can be recompiled using these.
+In addition, several intermediate outputs are saved in `outputs/` as binary `.RDS` files. This is done to facilitate rerunning individual scripts while minimizing numerical inaccuracies caused by converting between numerical and textual representations of parameter values.
 
-
-Data formatting and model fitting are not computationally intensive. On an ordinary laptop, running the analysis scripts takes less than 1 minute, and uses less than 200MB of memory on a single core. 
-
+Data formatting and model fitting of the main manuscript are not computationally intensive. On an ordinary laptop, running the analysis scripts 01 - 06 takes less than 1 minute, and uses less than 200MB of memory on a single core. 
+Simulations for the appendix, however, take about 15 minutes to execute on a single core.
 
 #### Notes on warnings and errors
 
@@ -92,12 +101,18 @@ glm.fit: fitted probabilities numerically 0 or 1 occurred
 - This warning is expected when running the `code/02_fit_candy_1991_models.R` script. It occurs because predicted probabilities are numerically indistinguishable from 1. This is further discussed in section 4.3 of the manuscript.
 
 ```
-Error in checkwz(wz, M, trace = trace, wzepsilon = control$wzepsilon) : 
-  NAs found in the working weights variable 'wz'
+In checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon) :
+  5 diagonal elements of the working weights variable 'wz' have been replaced by 1.819e-12
 ```
 
-- This error is expected when running `code/04_fit_VGAM_models.R` as models fitted to the data with the `VGAM` package did not converge when using the cloglog link. This has been reported to the package maintainer as a potential bug. In these cases the replication relied on alternative fitting approaches in `code/02_fit_candy_1991_models.R` and `code/05_fit_ordinal_models.R`.
+- This warning is expected when running `code/04_fit_VGAM_models.R`. It is related to the sparsity issues that result in the above warning produced by `stats::glm` and notifies the user that some diagonal elements of the weights matrix used in the iterative model fitting procedure have been adjusted to prevent numerical underflow. 
+In addition, neither of the `vglm` models converged when using the cloglog link. This behaviour has been reported to the package maintainer as a potential bug. In these cases the replication relied on alternative fitting approaches in `code/02_fit_candy_1991_models.R` and `code/05_fit_ordinal_models.R`.
+
+```
+In dpois(data$count, pred_n, log = T) : NaNs produced
+```
+
+- This warning is produced during when running `code/07_initial_value_sensitivity.R`, because the code explicitly checks for false model convergence under infinite likelihoods.
 
 ### Article reproduction
-
 The article uses the [ReScience C](https://rescience.github.io/) journal template. All elements are in the `article/` subfolder. Instructions to reproduce the article are provided in the subfolder [README](article/README.md).

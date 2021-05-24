@@ -1,6 +1,8 @@
-# supplementary script to assess sensitivity of results to starting values
+# script to assess sensitivity of results to starting values
 library(ggplot2)
 library(dplyr)
+# load definitions of likelihood functions and related simulation functions
+source('code/00_function_definitions.R')
 
 # load data
 budworm_counts <- readr::read_csv('data/budworm_counts.csv', col_types = "dddd")

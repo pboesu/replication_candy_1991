@@ -1,4 +1,7 @@
 library(dplyr)
+# load definitions of likelihood functions and related simulation functions
+source('code/00_function_definitions.R')
+
 # read data ddeg day-degrees, total total individuals in stage,  
 #! stage stage number 1-5 instars, 6 pupa, 7 adult
 #! count total individuals in stage

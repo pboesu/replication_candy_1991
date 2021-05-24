@@ -1,5 +1,8 @@
 library(dplyr)
 library(kableExtra)
+# load definitions of likelihood functions and related simulation functions
+source('code/00_function_definitions.R')
+# load data
 budworm_counts <- readr::read_csv('data/budworm_counts.csv', col_types = "dddd")
 
 # optimize likelihood directly rather than doing the IRLS approach and using literal translation of the original SAS code.
@@ -17,15 +20,13 @@ candy_nll_estimates <- readRDS("outputs/candy_nll_estimates.RDS") %>% filter(V1 
 
 
 
-# paste together fits and
+# paste together fits for table
 dennis_model_estimates <- as.data.frame(rbind(dennis_par,sas_par, unname(logit_cm_dennis_nll$par), unname(logit_cm_dennis_nll_plogis$par), candy_par))
 dennis_model_estimates$model <- "cumulative"
 dennis_model_estimates$link <- "logit"
 dennis_model_estimates$fit <- c("Original \\citep{kemp1986stochastic}", "SAS \\verb+NLIN+", "R \\verb+optim+","R \\verb+optim/plogis+", "Original \\citep{candy1991modeling}")
 dennis_model_estimates$eqn <- c("\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}", "\\ref{eq:dennis_cm}","\\ref{eq:dennis_cm}","\\ref{eq:candy_cm_count_form}")
 
-
-library(kableExtra)
 # create sub heading string to sepearat the results for the two different parameterisations
 sub_header <- paste(c('Method', paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$', 'Eqn. \\\\'), collapse = " & ")
 
