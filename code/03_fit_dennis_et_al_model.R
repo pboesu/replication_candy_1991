@@ -26,7 +26,7 @@ nll_cm_dennis <- function(par, count, total, stage, ddeg){
   return(nll)
 }
 
-logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=1), method = 'L-BFGS-B', lower = rep(0,7))
+logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=0), method = 'L-BFGS-B', lower = rep(0,7))
 
 #This is an alternative implementation that uses the R function stats::plogis 
 nll_cm_dennis_plogis <- function(par, count, total, stage, ddeg){
