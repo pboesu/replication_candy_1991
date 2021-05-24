@@ -25,15 +25,17 @@ The project makes use of the the `renv` package for project-local R dependency m
 ```
 git clone https://github.com/pboesu/replication_candy_1991
 ```
-2. If you want to use `renv` launch `R` in the repository. The local `.Rprofile` file should ensure that the correct version of `renv` is installed. Ignore any message about using `renv::status()`. If you do not want to use `renv` remove or rename `.Rprofile` and skip to stage 5.
+2. If you do not want to use `renv` remove or rename `.Rprofile` and skip to stage 6 (not recommended). 
 
-3. Run the following command to install the exact versions of packages specified in the renv.lock file.
+3. If you want to use `renv` launch `R` in the repository. The local `.Rprofile` file should ensure that the correct version of `renv` is installed. At the time of writing it appears safe to ignore any message about using `renv::status()`, and any message stating that the projected requested an older R version than the currently installed one. 
+
+4. Run the following command to install the exact versions of packages specified in the renv.lock file.
 ```r
 renv::restore()
 ```
-4. Agree to installing the required packages when prompted. Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
+5. Agree to installing the required packages when prompted. Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
 
-5. If you do not choose to use `renv` for dependency management you can manually install the necessary packages as listed in the session info below
+6. If you do not choose to use `renv` for dependency management you can manually install the necessary packages as listed in the session info below
 ```
 R version 3.6.1 (2019-07-05)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
@@ -66,7 +68,7 @@ loaded via a namespace (and not attached):
 
 
 #### Running the models
-After setup, the complete analysis can be run to reproduce all figures and tables by sourcing the `R` scripts 01 to 06 in sequence. 
+After setup, the complete analysis can be run to reproduce all figures and tables by sourcing the `R` scripts `01_reformat_budworm_data.R` to `code/07_initial_value_sensitivity.R` in sequence. 
 However, each individual analysis script can be run individually and the user is encouraged to step through the individual scripts to learn more about the replication, and in particular to see where particular model implementations fail or produce warnings.
 Note that the final script to reproduce the appendix will take about 15 minutes to run on a regular desktop.
 
