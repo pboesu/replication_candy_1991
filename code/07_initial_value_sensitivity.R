@@ -73,14 +73,14 @@ candy_cm_pars = tibble(ref_estimate = c(c(5.49,5.49+3.90,5.49+6.74,5.49+10.21,5.
                        link = c(rep('logit', 7),rep('cloglog',7)))
 
 # calculate CV and correlation between start and estimate for converged estimates
-simulation_results %>% mutate(good = value < 95 & link == 'logit' | value < 100 & link == 'cloglog') %>% group_by(link) %>% summarize(finite_nll = sum(convergence == 0) / n(), good_nll_all = sum(good, na.rm = T)/n(), good_nll = sum(good, na.rm = T)/sum(convergence == 0))
+simulation_results %>% mutate(good = value < 93 & link == 'logit' | value < 100 & link == 'cloglog') %>% group_by(link) %>% summarize(finite_nll = sum(convergence == 0) / n(), good_nll_all = sum(good, na.rm = T)/n(), good_nll = sum(good, na.rm = T)/sum(convergence == 0))
 simulation_results  %>%
   mutate(good = value < 95 & link == 'logit' | value < 100 & link == 'cloglog') %>%
   group_by(parameter, link) %>% 
   summarize(sim_range = paste(round(range(init),digits = 1), collapse = ' - '),
             conv_range = paste(round(range(init[convergence == 0], na.rm = TRUE),digits = 1), collapse = ' - ')) %>% arrange(desc(link), parameter) -> results_unfiltered
 
-simulation_results %>% filter(value < 95 & link == 'logit' | value < 100 & link == 'cloglog') %>% group_by(parameter, link) %>% summarize(filt_range = paste(round(range(init),digits = 1), collapse = ' - '),cv = sd(estimate, na.rm = TRUE) / abs(mean(estimate, na.rm = TRUE))*100, corr_init = cor(init, estimate, use = 'complete'), corr_p = cor.test(init, estimate, use = 'complete')$p.value) %>% arrange(desc(link), parameter) -> results_filtered
+simulation_results %>% filter(value < 93 & link == 'logit' | value < 100 & link == 'cloglog') %>% group_by(parameter, link) %>% summarize(filt_range = paste(round(range(init),digits = 1), collapse = ' - '),cv = sd(estimate, na.rm = TRUE) / abs(mean(estimate, na.rm = TRUE))*100, corr_init = cor(init, estimate, use = 'complete'), corr_p = cor.test(init, estimate, use = 'complete')$p.value) %>% arrange(desc(link), parameter) -> results_filtered
 
 # assemble table for manuscript
 parameter_sens_table <- bind_cols(results_unfiltered, results_filtered[,3:6]) %>%
@@ -103,7 +103,7 @@ par_formats = tibble(parameter_simple = c(paste('a', 1:6, sep = ''), 'b'),
 simulation_results %>% left_join(par_formats, by = c('parameter' = 'parameter_simple')) %>% ggplot(aes(x = init, y = estimate, col = log(value))) + geom_point() + facet_wrap(link~parameter_plotmath, scales = 'free',nrow = 2, labeller = label_parsed) + geom_hline(aes(yintercept = ref_estimate), data = left_join(candy_cm_pars, par_formats, by = c('parameter' = 'parameter_simple')), col = "#E7B800", lty = 2, lwd = 0.7) + theme_classic() + theme(legend.position = 'bottom') + labs(color = 'log(negative log-likelihood)') + xlab('initial value')
 ggsave('figures/figS1_initial_value_sensitivity_unfiltered.pdf', width = 10, height = 5.5)
 # filter estimates for 'good fits' to better show variation within the bulk of the results
-pivoted_sens %>% filter(value < 95 & link == 'logit') -> pivoted_sens_good_logit
+pivoted_sens %>% filter(value < 93 & link == 'logit') -> pivoted_sens_good_logit
 pivoted_sens %>% filter(value < 100 & link == 'cloglog') -> pivoted_sens_good_cloglog
 # pairwise plots of parameter estimates against initial values, and of initial values against each other
 my_cols <- c("#E7B800","#00AFBB")  

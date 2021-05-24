@@ -56,22 +56,16 @@ Data formatting and model fitting are not computationally intensive. On an ordin
 #### Notes on warnings and errors
 
 ```
-In dpois(data$count, pred_n, log = T) : NaNs produced
-```
-
-- This warning is expected when running the `code/02_fit_candy_1991_models.R` script. It will be repeated several times, as the model likelihood is not finite under some parameter proposals before convergence is achieved.
-
-```
 glm.fit: fitted probabilities numerically 0 or 1 occurred
 ```
-- This warning is expected when running the `code/02_fit_candy_1991_models.R` script. It occurs because complete or partial separation occurs for some stages in the continuation ratio model.
+- This warning is expected when running the `code/02_fit_candy_1991_models.R` script. It occurs because predicted probabilities are numerically indistinguishable from 1. This is further discussed in section 4.3 of the manuscript.
 
 ```
 Error in checkwz(wz, M, trace = trace, wzepsilon = control$wzepsilon) : 
   NAs found in the working weights variable 'wz'
 ```
 
-- This error is expected when running `code/04_fit_VGAM_models.R` as models fitted to the data with the `VGAM` package did not converge when using the cloglog link. In these cases the replication relied on alternative fitting approaches in `code/02_fit_candy_1991_models.R` and `code/05_fit_ordinal_models.R`.
+- This error is expected when running `code/04_fit_VGAM_models.R` as models fitted to the data with the `VGAM` package did not converge when using the cloglog link. This has been reported to the package maintainer as a potential bug. In these cases the replication relied on alternative fitting approaches in `code/02_fit_candy_1991_models.R` and `code/05_fit_ordinal_models.R`.
 
 ### Article reproduction
 

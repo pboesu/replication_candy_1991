@@ -19,6 +19,14 @@ The only available covariate is a measure of seasonal progression, the accumulat
 \citet{candy1991modeling} noted an inconsistency in these data, namely that the reported total number of individuals did not correspond to the sum across the seven development stages for two of the sampling occasions. 
 I therefore use the data set as it was republished in \citep{candy1990biology}, where numbers in each stage have been assumed correct and the totals for each sampling occasion were adjusted accordingly.
 
+\begin{table}[tbp]
+  \small
+    \centering
+    \caption{The data used in this replication are counts of western spruce budworm \emph{Choristoneura freemani} across seven developmental stages on 12 sampling occasions, as published in \citep{candy1990biology}.}
+  \input{../outputs/budworm_table}
+  \label{tab:tab0}
+\end{table}
+
 \section{Methods}
 The statistical models replicated here are different types of ordinal regression models~\citep{agresti2010analysis}, all with the aim of predicting the proportion of an insect population in a particular development stage at any given time. 
 In particular, they represent three different parameterisations of the so-called cumulative model and one version of the so-called sequential model. 
@@ -63,6 +71,7 @@ For the purpose of parameter estimation \citet{candy1991modeling} re-expressed t
 and fits it using a Poisson likelihood \citep{thompson1981composite}. 
 No code or initial values for the likelihood optimisation are provided for this estimation procedure in the original paper.   
 I therefore created an R version of the estimation procedure which directly optimizes a Poisson log-likelihood for Equation~\ref{eq:candy_cm_count_form} using the BFGS method in the \verb+optim+ function.
+Initial values for the optimisation were determined using a random search across plausible start values (see Appendix~\ref{sec:appendix}).
  The cumulative model is implemented in various R packages, including in the \verb+vglm+ function in \verb+VGAM+ \citep{VGAM} and the \verb+clm+ function in \verb+ordinal+ \cite{ordinal} and for comparison I also fit the models using these functions.
 
 \subsection{Cumulative model with proportional variance}
@@ -216,11 +225,13 @@ Figure~\ref{fig:fig1} and~\ref{fig:fig2}, respectively, show that despite the ob
 \end{table}
 
 \subsection{Sequential model}
+\label{sec:sm-results}
 Parameters were estimated using the R \verb+glm+ function and \verb+VGAM::vglm+. 
+The GLM formulation of the model fitted with R \verb+glm+ produced a warning that fitted probabilities numerically 0 or 1 occurred. This is because the population variation in development speed for the study species is low compared to the overall speed of seasonal progression.
+As a result the early and late development stages of the observed species never occur together, and the observed data are sparse in the sense that many cell counts in Table~\ref{tab:tab0} that are 0.
+As a consequence the model estimates large effects, which although estimable on the link scale, are indistinguishable from 1 on the probability scale given the limitations of floating point representations. 
 The cloglog link model failed due to numerical errors when using the \verb+vglm+ function. 
-Parameter estimates were identical to the original study (Table~\ref{tab:tab3}) within the  precision reported in \citep{candy1991modeling}.
-
-
+Parameter estimates, where obtained, were identical to the original study (Table~\ref{tab:tab3}) within the precision reported in \citep{candy1991modeling}.
 
 \section{Discussion}
 Overall the results from both \citep{dennis1986stochastic} and \citep{candy1991modeling} could be replicated closely.
@@ -236,13 +247,13 @@ GLIM code of the cumulative model with proportional variance was available from 
 This allowed me to use the same initial values as the original study for this model. 
 Initial values for the model with constant variance had to be guessed.
 The direct optimisation of the likelihood is sensitive to the choice of initial values~\citep{dennis1986stochastic}. 
-Additional simulations (Appendix) showed that the coefficient of variation for estimates derived from a wide range of initial values was c. 0.6\% and c. 1.7\% for the logit and cloglog models, respectively, whenenver the model converged succesfully (Table~\ref{tab:tabS2}).
-This means the observed differences between the published parameter estimates and those obtained using R \verb+optim+ are on the order of approximately 2 standard deviations of the expected variation caused by the choice of initial values.
-The uncertainty about initial values may therefore explain the differences in the parameter estimates between the different methods. 
+Additional simulations (Appendix~\ref{sec:appendix}) showed that the coefficient of variation for estimates derived from a wide range of initial values was c. 0.5\% and c. 1.7\% for the logit and cloglog models, respectively, whenenver the model converged succesfully (Table~\ref{tab:tabS2}).
+The observed differences between the published parameter estimates and those obtained using R \verb+optim+ are well within the range of variation caused by the choice of initial values.
 Another factor may be slight differences in the numerical implementation of the inverse link functions. 
 Naive implementations of both the inverse logit and inverse complementary log-log function suffer from numerical underflow and/or overflow. 
-The GLIM code from \citep{candy1990biology} uses multiple thresholding steps during the calculation of the linear predictor to mitigate against this, whereas the R implementation makes use of a single thresholding step in the inverse link function (\verb+gtools::inv.logit+~\citep{gtools} and \verb+VGAM::clogloglink+, respectively).  
-The numerical instability of the complementary log-log link may have contributed to the failure to fit either of the two corresponding models using the \verb+VGAM::vglm+ function. 
+The GLIM code from \citep{candy1990biology} uses multiple thresholding steps during the calculation of the linear predictor to mitigate against this, whereas the R implementation makes use of a single thresholding step in the inverse link function (\verb+gtools::inv.logit+~\citep{gtools} or \verb+stats::plogis+ and \verb+VGAM::clogloglink+, respectively). 
+While differences in parameter estimates between a literal implementation of the logit link and  \verb+stats::plogis+ for the cumulative model with proportional variance (Table~\ref{tab:tab3} were less than 0.01\%, the complementary log-log proved to be numerically much less stable (Figure~\ref{fig:figS1}) and this may have contributed to the failure to fit either of the two corresponding models using the \verb+VGAM::vglm+ function. 
 However, despite several troubleshooting attempts the exact reason for the numerical issues leading to the failure could not be established.
+The issue has been reported to the maintainer of the \verb+VGAM+ package as a potential bug.
 
 \afterpage{\clearpage}

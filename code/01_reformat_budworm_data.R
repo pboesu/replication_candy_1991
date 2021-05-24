@@ -11,7 +11,13 @@ readr::write_csv(budworm_counts, 'data/budworm_counts.csv')
 
 budworm_table <- tidyr::pivot_wider(data = budworm_counts, names_from = stage, values_from = count, names_sort = TRUE, names_prefix = 'stage') %>% mutate(ddeg_cent = scale(ddeg, scale = FALSE))
 readr::write_csv(budworm_table, 'data/budworm_table.csv')
-
+# write out simplified latex version for manuscript
+budworm_table_tex <- budworm_table %>%
+  select(-total,-ddeg_cent) %>%
+  knitr::kable(format = 'latex', align = 'r', row.names = FALSE,
+               col.names = c('Degree Days',paste('Stage',1:7)),
+               linesep = c('', '', '', '\\addlinespace'), escape = FALSE, booktabs = TRUE)
+cat(budworm_table_tex, file = 'outputs/budworm_table.tex')
 
 budworm_individuals <- budworm_counts %>% tidyr::uncount(count) %>% mutate(ddeg_cent = scale(ddeg, scale = FALSE))
 readr::write_csv(budworm_individuals, 'data/budworm_individuals.csv')
