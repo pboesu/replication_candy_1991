@@ -28,7 +28,6 @@ cloglog_cm_candy_nll$par
 
 logit_dennis_cm_candy_nll <- optim(par = c(101.0, 71.2+101.0, 121.7+101.0, 186.2+101.0,289.9+101.0,400.3+101.0,-0.6), poisson_nll_cm_candy_dennis, data = budworm_counts, hessian = TRUE, control = list(trace=0), method = 'BFGS')
 logit_dennis_cm_candy_nll$par
-# std_error_from_nll_hessian(logit_cm_candy_nll)
 
 # save parameter estimates
 candy_nll_estimates <- as.data.frame(rbind(logit_cm_candy_nll$par, cloglog_cm_candy_nll$par, logit_dennis_cm_candy_nll$par))
