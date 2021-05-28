@@ -6,10 +6,10 @@ source('code/00_function_definitions.R')
 budworm_counts <- readr::read_csv('data/budworm_counts.csv', col_types = "dddd")
 
 # optimize likelihood directly rather than doing the IRLS approach and using literal translation of the original SAS code.
-logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=0), method = 'L-BFGS-B', lower = rep(0,7))
+logit_cm_dennis_nll <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=0, parscale = c(rep(1,6), 0.01)), method = 'L-BFGS-B', lower = rep(0,7))
 
 # optimize likelihood directly using stats::plogis as the link function
-logit_cm_dennis_nll_plogis <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis_plogis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=0, maxit = 500), method = 'L-BFGS-B', lower = rep(1e-12,7))
+logit_cm_dennis_nll_plogis <- optim(par = c(A1 = 150, A2 = 230, A3 = 280, A4 = 330, A5 = 440, A6 = 580, BB = 3), nll_cm_dennis_plogis, count = budworm_counts$count, total = budworm_counts$total, stage = budworm_counts$stage, ddeg = budworm_counts$ddeg, hessian = TRUE, control = list(trace=0, maxit = 500, parscale = c(rep(1,6), 0.01)), method = 'L-BFGS-B', lower = rep(.Machine$double.xmin,7))
 
 # predictions and comparisons
 dennis_par = c(121.08, 204.36, 264.41, 342.473, 465.620, 599.57, 1.559)# transcribed from Kemp et al. 1986 Table 1

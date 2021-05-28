@@ -6,10 +6,13 @@
 library(VGAM)
 budworm_table <- readr::read_csv('data/budworm_table.csv', col_types = 'dddddddddd')
 
-# fitting the  cumulative model with cloglog link fails - this has been reported to the package maintainer
-# budworm_cumulative_cloglog_vglm <- try(vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
-#                                         cumulative(reverse = FALSE, link = clogloglink(bvalue = 1e-8), parallel = TRUE), coefstart = c(3,6,8,10,14,17,-0.04), data = budworm_table))# fails
-
+# # fitting the  cumulative model with cloglog link results in a false convergence - this has been reported to the package maintainer
+# budworm_cumulative_cloglog_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
+#                                         cumulative(reverse = FALSE, link = clogloglink(), parallel = TRUE),
+#                                         coefstart = c(3.32,5.85,7.71,10.02,13.46,17,-0.03),
+#                                         data = budworm_table,
+#                                         control = vglm.control(checkwz = TRUE, trace = TRUE, stepsize = 1, maxit = 100, epsilon = 1e-10))# fails
+# budworm_cumulative_cloglog_vglm_noinit <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg, cumulative(reverse = FALSE, link = clogloglink(), parallel = TRUE), data = budworm_table)
 
 budworm_cumulative_logit_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
                                       cumulative(reverse = FALSE, link = "logitlink", parallel = TRUE), data = budworm_table) # reproduces parameter estimates in table 2 of candy
@@ -26,9 +29,8 @@ saveRDS(candy_vglm_cm_estimates, "outputs/candy_vglm_cm_estimates.RDS")
 budworm_sratio_logit_vglm <- vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg,
                                   sratio(link = "logitlink", parallel = FALSE), data = budworm_table)# this function call will succeed but produce warnings about replacing working weights to prevent numerical underflow.
 
-# fitting the sratio model with clogloglink fails - this has been reported to the package maintainer
-# budworm_sratio_cloglog_vglm <- try(vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg_cent,
-#                                        sratio(link = "clogloglink", parallel = FALSE), data = budworm_table, control = vglm.control(checkwz = TRUE)))#
+# # fitting the sratio model with clogloglink fails - this has been reported to the package maintainer
+# budworm_sratio_cloglog_vglm <- try(vglm(cbind(stage1, stage2, stage3, stage4, stage5, stage6, stage7) ~ ddeg_cent, sratio(link = clogloglink(), parallel = FALSE), coefstart = coef(budworm_sratio_logit_vglm), data = budworm_table, control = vglm.control(checkwz = TRUE)))#
 
 # save parameter estimates
 candy_vglm_sm_estimates <- as.data.frame(rbind(unname(coef(budworm_sratio_logit_vglm)[1:6]),unname(coef(budworm_sratio_logit_vglm)[7:12]),rep(NA,6),rep(NA,6)))

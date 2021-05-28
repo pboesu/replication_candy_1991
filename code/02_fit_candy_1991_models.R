@@ -20,13 +20,13 @@ budworm_counts <- group_by(budworm_counts, ddeg) %>%
 # use optimal starting values from supplementary simulations
 init_cloglog <- readRDS('outputs/init_cloglog.RDS')
 init_logit <- readRDS('outputs/init_logit.RDS')
-logit_cm_candy_nll <- optim(par = init_logit, poisson_nll_cm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=0), method = 'BFGS')
+logit_cm_candy_nll <- optim(par = init_logit, poisson_nll_cm_candy, data = budworm_counts, hessian = TRUE, control = list(trace=0, parscale = c(rep(1,6), 0.01)), method = 'BFGS')
 logit_cm_candy_nll$par
 
-cloglog_cm_candy_nll <- optim(par = init_cloglog, poisson_nll_cm_candy, data = budworm_counts, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, hessian = TRUE, control = list(trace=0), method = 'BFGS')
+cloglog_cm_candy_nll <- optim(par = init_cloglog, poisson_nll_cm_candy, data = budworm_counts, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)}, hessian = TRUE, control = list(trace=0, parscale = c(rep(1,6), 0.01)), method = 'BFGS')
 cloglog_cm_candy_nll$par 
 
-logit_dennis_cm_candy_nll <- optim(par = c(101.0, 71.2+101.0, 121.7+101.0, 186.2+101.0,289.9+101.0,400.3+101.0,-0.6), poisson_nll_cm_candy_dennis, data = budworm_counts, hessian = TRUE, control = list(trace=0), method = 'BFGS')
+logit_dennis_cm_candy_nll <- optim(par = c(101.0, 71.2+101.0, 121.7+101.0, 186.2+101.0,289.9+101.0,400.3+101.0,-0.6), poisson_nll_cm_candy_dennis, data = budworm_counts, hessian = TRUE, control = list(trace=0, parscale = c(rep(1,6), 0.01)), method = 'BFGS')
 logit_dennis_cm_candy_nll$par
 
 # save parameter estimates

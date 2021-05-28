@@ -25,7 +25,7 @@ cm_constant_var_table <- rbind(candy_estimates,candy_nll_estimates,candy_ordinal
   arrange(desc(link),eqn) %>% 
   select(-eqn, -model) %>%
   relocate(fit, .before = V1) %>%
-  knitr::kable(digits = 2, format = 'latex', align = 'c', row.names = FALSE,
+  knitr::kable(digits = c(rep(2,7),4,2), format = 'latex', align = 'c', row.names = FALSE,
                col.names = c('Method',paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$','Link'),
                linesep = c('', '', '', '\\addlinespace'), escape = FALSE, booktabs = TRUE)
 

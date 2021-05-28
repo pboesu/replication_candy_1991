@@ -53,7 +53,7 @@ simulation_results %>%
 simulation_results  %>%
   mutate(good = value < 95 & link == 'logit' | value < 100 & link == 'cloglog') %>%
   group_by(parameter, link) %>% 
-  summarize(sim_range = paste(round(range(init),digits = 1), collapse = ' - '),
+  summarize(sim_range = paste(round(range(init),digits = 2), collapse = ' - '),
             conv_range = paste(round(range(init[convergence == 0], na.rm = TRUE),digits = 1), collapse = ' - '),
             .groups = 'drop') %>%
   arrange(desc(link), parameter) -> results_unfiltered
@@ -64,12 +64,23 @@ simulation_results %>%
   summarize(filt_range = paste(round(range(init),digits = 1), collapse = ' - '),
             cv = sd(estimate, na.rm = TRUE) / abs(mean(estimate, na.rm = TRUE))*100,
             corr_init = cor(init, estimate, use = 'complete'),
-            corr_p = cor.test(init, estimate, use = 'complete')$p.value,
+            corr_p = pmin(1,cor.test(init, estimate, use = 'complete')$p.value*7), #bonferroni correct p-values
             .groups = 'drop') %>%
   arrange(desc(link), parameter) -> results_filtered
 
+# make a lookup table of parameter names for printing with plotmath and latex
+par_formats = tibble(parameter_simple = c(paste('a', 1:6, sep = ''), 'b'),
+                     parameter_plotmath = c(paste('alpha[',1:6,']', sep=''),'beta'),
+                     parameter_latex = c(paste('$\\alpha_',1:6,'$', sep=''),'$\\beta$'),
+                     init_latex = c(paste('$\\alpha^{o}_',1:6,'$', sep=''),'$\\beta^o$'),
+                     est_latex = c(paste('$\\hat{\\alpha}_',1:6,'$', sep=''),'$\\hat{\\beta}$'))
+
+
 # assemble table for manuscript
 parameter_sens_table <- bind_cols(results_unfiltered, results_filtered[,3:6]) %>%
+  left_join(select(par_formats, parameter_simple, parameter_latex), by = c('parameter' = 'parameter_simple')) %>%
+  relocate(parameter_latex, before = parameter) %>%
+  select(-parameter) %>%
   knitr::kable(digits = 3, format = 'latex', align = 'c', row.names = FALSE,
                col.names = c('Par.', 'Link','Sim. range','Conv. range','Filtered range','CV (\\%)','$\\rho^{o}$','$P_\\rho$'),
                linesep = c('', '', '','', '', '', '\\addlinespace'), escape = FALSE, booktabs = TRUE)
@@ -161,3 +172,30 @@ for (i in 1:7){
   }
 }
 dev.off()
+
+
+# # vgam start value search
+# set.seed(4567)
+# vgam_sens_list <- lapply(1:10000, cm_vgam_sens)
+# vgam_results <- dplyr::bind_rows(vgam_sens_list)
+# hist(vgam_results$value)
+# 
+# bind_rows(vgam_sens_list) %>% ggplot(aes(x = init, y = estimate, col = value)) + geom_point() + facet_wrap(~parameter) + ylim(-0.5,20) + geom_hline(aes(yintercept = ref_estimate, lty = link), data = candy_cm_pars) + abline()
+# vgam_results[which.max(vgam_results$value),]
+# 
+# # cm model likelihood surface
+# set.seed(4567)
+# nll_surface_list <- lapply(1:10000, cm_nll_surface)
+# nll_surface <- dplyr::bind_rows(nll_surface_list)
+# nll_surface %>% ggplot(aes(x = init, y = log(value))) + geom_point() + facet_wrap(~parameter, scales = 'free')
+# nll_wide <- tidyr::pivot_wider(nll_surface, values_from = init, names_from = parameter, names_prefix = 'init')
+# ggplot(nll_wide, aes(x = initb, y = inita1, col = log(value))) + geom_point() + scale_color_viridis_c()
+# ggplot(nll_wide, aes(x = inita1, y = log(value), col =initb)) + geom_point() + scale_color_viridis_c()
+# 
+# set.seed(4567)#b0- -0.1
+# nll_surface_list <- lapply(1:10000, cm_nll_surface, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)})
+# nll_surface <- dplyr::bind_rows(nll_surface_list)
+# nll_surface %>% ggplot(aes(x = init, y = log(value))) + geom_point() + facet_wrap(~parameter, scales = 'free')
+# nll_wide <- tidyr::pivot_wider(nll_surface, values_from = init, names_from = parameter, names_prefix = 'init')
+# ggplot(nll_wide, aes(x = initb, y = inita1, col = log(value))) + geom_point() + scale_color_viridis_c()
+# ggplot(nll_wide, aes(x = inita1, y = log(value), col =initb)) + geom_point() + scale_color_viridis_c()
