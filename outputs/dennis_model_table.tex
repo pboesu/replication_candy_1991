@@ -1,13 +1,15 @@
 
 \begin{tabular}{ccccccccc}
 \toprule
-$a_1$ & $a_2$ & $a_3$ & $a_4$ & $a_5$ & $a_6$ & $b^2$ & Method & Eqn.\\
+Method & $a_1$ & $a_2$ & $a_3$ & $a_4$ & $a_5$ & $a_6$ & $b^2$ & Eqn.\\
 \midrule
-121.080 & 204.360 & 264.410 & 342.473 & 465.620 & 599.570 & 1.559 & Original \citep{kemp1986stochastic} & \ref{eq:dennis_cm}\\
-120.000 & 204.700 & 264.600 & 341.300 & 464.500 & 595.700 & 1.412 & SAS \verb+NLIN+ & \ref{eq:dennis_cm}\\
-120.033 & 204.659 & 264.586 & 341.285 & 464.480 & 595.690 & 1.412 & R \verb+optim+ & \ref{eq:dennis_cm}\\
-\midrule $\alpha_1$ & $\alpha_2$ & $\alpha_3$ & $\alpha_4$ & $\alpha_5$ & $\alpha_6$ & $\beta$ & Method & Eqn. \\ \midrule
-101.000 & 172.200 & 222.700 & 287.200 & 390.900 & 501.300 & -0.842 & Original \citep{candy1991modeling} & \ref{eq:candy_cm_count_form}\\
-100.989 & 172.181 & 222.598 & 287.134 & 390.771 & 501.157 & -0.841 & R \verb+optim+ & \ref{eq:candy_cm_count_form}\\
+Original \citep{kemp1986stochastic} & 121.080 & 204.360 & 264.410 & 342.473 & 465.620 & 599.570 & 1.559 & \ref{eq:dennis_cm}\\
+SAS \verb+NLIN+ & 120.000 & 204.700 & 264.600 & 341.300 & 464.500 & 595.700 & 1.412 & \ref{eq:dennis_cm}\\
+R \verb+optim+ & 120.039 & 204.665 & 264.590 & 341.291 & 464.477 & 595.707 & 1.412 & \ref{eq:dennis_cm}\\
+R \verb+optim/plogis+ & 120.039 & 204.665 & 264.590 & 341.291 & 464.477 & 595.707 & 1.412 & \ref{eq:dennis_cm}\\
+\midrule Method & $\alpha_1$ & $\alpha_2$ & $\alpha_3$ & $\alpha_4$ & $\alpha_5$ & $\alpha_6$ & $\beta$ & Eqn. \\ \midrule
+Original \citep{candy1991modeling} & 101.000 & 172.200 & 222.700 & 287.200 & 390.900 & 501.300 & -0.842 & \ref{eq:candy_cm_count_form}\\
+\addlinespace
+R \verb+optim+ & 100.923 & 172.054 & 222.449 & 286.947 & 390.522 & 500.852 & -0.841 & \ref{eq:candy_cm_count_form}\\
 \bottomrule
 \end{tabular}
