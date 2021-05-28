@@ -35,7 +35,7 @@ renv::restore()
 ```
 5. Agree to installing the required packages when prompted. Installing the packages to the project library before first time use may take up to 20 minutes depending on the end-user's internet connection and whether or not packages are installed from source.
 
-6. If you do not choose to use `renv` for dependency management you can manually install the necessary packages as listed in the session info below
+6. If you do not choose to use `renv` for dependency management you can launch `R` in the repository root and manually install the necessary packages as listed in the session info below:
 ```
 R version 3.6.1 (2019-07-05)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
