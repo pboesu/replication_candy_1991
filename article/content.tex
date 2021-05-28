@@ -251,12 +251,12 @@ The GLIM code for the cumulative model from \citep{candy1990biology} uses multip
 Differences in parameter estimates between a literal implementation of the logit link and  \verb+stats::plogis+ for the cumulative model with proportional variance (Table~\ref{tab:tab3}) were less than 0.01\%, however, in the case of the constant variance model the complementary log-log link model proved to be numerically less stable than the corresponding logit-link model (Figure~\ref{fig:figS1}). 
 This is perhaps unsurprising as the cloglog function has a steeper slope as it approaches one compared to the logit function, so values numerically close to one are attained earlier.
 Given the sparsity of the data set and the resulting large estimated effect sizes this likely contributed to the failure to fit either of the cloglog-link models using the \verb+VGAM::vglm+ function.
-The behaviour was reported to the maintainer of the VGAM package, and initial troubleshooting of the VGAM code resolved some instabilities for the fitting of the cumulative model.
-These updates are now available in the pre-release version of VGAM\footnote{https://www.stat.auckland.ac.nz/~yee/VGAM/prerelease/index.html}.
+The behaviour was reported to the maintainer of the \verb+VGAM+package, and initial troubleshooting of the\verb+VGAM+ code resolved some instabilities for the fitting of the cumulative model.
+These updates are now available in the pre-release version of \verb+VGAM+\footnote{https://www.stat.auckland.ac.nz/~yee/VGAM/prerelease/index.html}.
 However, other instabilities remain. 
-The cumulative model using the updated VGAM code converges far from the optimum identified by the other methods and a fix for the error affecting the sequential model are yet to be implemented.
+The cumulative model using the updated \verb+VGAM+ code converges far from the optimum identified by the other methods and a fix for the error affecting the sequential model are yet to be implemented.
 
 \section*{Acknowledgements}
-I am grateful to Juniper Simonis and Andrew MacDonald for constructive reviews of an earlier version of this manuscript, and to Thomas Yee for investigating numerical errors in the VGAM package.
+I am grateful to Juniper Simonis and Andrew MacDonald for constructive reviews of an earlier version of this manuscript, and to Thomas Yee for investigating numerical errors in the \verb+VGAM+ package.
 
 \afterpage{\clearpage}

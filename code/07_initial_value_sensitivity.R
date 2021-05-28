@@ -172,30 +172,3 @@ for (i in 1:7){
   }
 }
 dev.off()
-
-
-# # vgam start value search
-# set.seed(4567)
-# vgam_sens_list <- lapply(1:10000, cm_vgam_sens)
-# vgam_results <- dplyr::bind_rows(vgam_sens_list)
-# hist(vgam_results$value)
-# 
-# bind_rows(vgam_sens_list) %>% ggplot(aes(x = init, y = estimate, col = value)) + geom_point() + facet_wrap(~parameter) + ylim(-0.5,20) + geom_hline(aes(yintercept = ref_estimate, lty = link), data = candy_cm_pars) + abline()
-# vgam_results[which.max(vgam_results$value),]
-# 
-# # cm model likelihood surface
-# set.seed(4567)
-# nll_surface_list <- lapply(1:10000, cm_nll_surface)
-# nll_surface <- dplyr::bind_rows(nll_surface_list)
-# nll_surface %>% ggplot(aes(x = init, y = log(value))) + geom_point() + facet_wrap(~parameter, scales = 'free')
-# nll_wide <- tidyr::pivot_wider(nll_surface, values_from = init, names_from = parameter, names_prefix = 'init')
-# ggplot(nll_wide, aes(x = initb, y = inita1, col = log(value))) + geom_point() + scale_color_viridis_c()
-# ggplot(nll_wide, aes(x = inita1, y = log(value), col =initb)) + geom_point() + scale_color_viridis_c()
-# 
-# set.seed(4567)#b0- -0.1
-# nll_surface_list <- lapply(1:10000, cm_nll_surface, linkinv = function(x){VGAM::clogloglink(x, inverse = TRUE)})
-# nll_surface <- dplyr::bind_rows(nll_surface_list)
-# nll_surface %>% ggplot(aes(x = init, y = log(value))) + geom_point() + facet_wrap(~parameter, scales = 'free')
-# nll_wide <- tidyr::pivot_wider(nll_surface, values_from = init, names_from = parameter, names_prefix = 'init')
-# ggplot(nll_wide, aes(x = initb, y = inita1, col = log(value))) + geom_point() + scale_color_viridis_c()
-# ggplot(nll_wide, aes(x = inita1, y = log(value), col =initb)) + geom_point() + scale_color_viridis_c()
