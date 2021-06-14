@@ -39,7 +39,7 @@ keywords: Insects, categorical regression, R, sequential model
 code:
   - url: https://github.com/pboesu/replication_candy_1991
   - doi: 10.5281/zenodo.4943258
-  - swh: 
+  - swh: swh:1:dir:fa45767e4bb56f7807fe2081cfe069881f8b049e
 
 # Data URL and DOI (optional if no data)
 data:
