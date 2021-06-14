@@ -38,7 +38,7 @@ keywords: Insects, categorical regression, R, sequential model
 #   see https://guides.github.com/activities/citable-code/
 code:
   - url: https://github.com/pboesu/replication_candy_1991
-  - doi: 
+  - doi: 10.5281/zenodo.4943258
   - swh: 
 
 # Data URL and DOI (optional if no data)
@@ -87,14 +87,14 @@ review:
   - url: 
 
 contributors:
-  - name:
-    orcid: 
+  - name: Timothée Poisot
+    orcid: 0000-0002-0735-5184
     role: editor
-  - name:
-    orcid:
+  - name: Juniper L. Simonis
+    orcid: 0000-0001-9798-0460
     role: reviewer
-  - name:
-    orcid:
+  - name: A. Andrew. M. MacDonald
+    orcid: 0000-0003-1162-169X
     role: reviewer
 
 # This information will be provided by the editor
