@@ -38,8 +38,8 @@ keywords: Insects, categorical regression, R, sequential model
 #   see https://guides.github.com/activities/citable-code/
 code:
   - url: https://github.com/pboesu/replication_candy_1991
-  - doi: 10.5281/zenodo.4943258
-  - swh: 
+  - doi: 
+  - swh: swh:1:dir:fa45767e4bb56f7807fe2081cfe069881f8b049e
 
 # Data URL and DOI (optional if no data)
 data:
@@ -100,18 +100,18 @@ contributors:
 # This information will be provided by the editor
 dates:
   - received:  September 22, 2020
-  - accepted:
-  - published: 
+  - accepted:  June 3, 2021
+  - published: June 16, 2021
 
 # This information will be provided by the editor
 article:
-  - number: # Article number will be automatically assigned during publication
-  - doi:    # DOI from Zenodo
-  - url:    # Final PDF URL (Zenodo or rescience website?)
+  - number: 5
+  - doi: 10.5281/zenodo.5006005    
+  - url: https://zenodo.org/record/5006005/files/article.pdf
 
 # This information will be provided by the editor
 journal:
   - name:   "ReScience C"
   - issn:   2430-3658
-  - volume: 4
+  - volume: 7
   - issue:  1
